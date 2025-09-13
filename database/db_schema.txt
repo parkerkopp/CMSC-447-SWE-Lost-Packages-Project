@@ -1,0 +1,42 @@
+/* File name: db_schema.sql */
+/* Script for the creation of the database tables */
+/* Prerequisite: sqlite3 application installed and available on PATH */
+/* To run at the command line do: sqlite3 package_db.db < db_schema.txt */
+
+/* Enable foreign keys */
+PRAGMA foreign_keys = ON;
+
+/* Entity tables */
+CREATE TABLE package_info (
+ tracking_num		varchar(22) not null,
+	 recipient_name		varchar(40) not null,
+	 current_building	varchar(4) not null,
+	 current_room		varchar(15),
+	 collected_status	varchar(3) not null,
+	 primary key (tracking_num)
+	 foreign key (recipient_name) references user_info(user_name)
+	 foreign key (current_building) references location_info(building_name)
+);
+
+CREATE TABLE department_info(
+ department_name	varchar(65) not null,
+	 building		varchar(4) not null,
+	 main_office	varchar(15) not null,
+	 phone_number		varchar(14),
+	 department_email	varchar(30),
+	 primary key (department_name)
+	 foreign key (building) references location_info(building_name)
+);
+
+CREATE TABLE user_info (
+	user_email		varchar(30) not null,
+	user_name		varchar(40) not null,
+	phone_number		varchar(14),
+	primary key (user_email, user_name)
+);
+
+CREATE TABLE location_info (
+	building_name 		varchar(4) not null,
+	primary key (building_name)
+);
+
