@@ -2,3 +2,24 @@
   --umbc-gold: #fdb515;
   --umbc-black: #000000;
 }
+
+.nav-bar {
+  display: flex;
+  background: var(--umbc-gold);
+  font-size: 20px;
+  justify-content: space-evenly;
+  align-items: center;
+  border-radius: 15px;
+  height: 5vh;
+}
+
+.link {
+  color: var(--umbc-black);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: #444;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

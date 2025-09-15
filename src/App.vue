@@ -1,23 +1,13 @@
-<script setup>
-import { ref, computed } from "vue";
-import HomePage from "./components/HomePage.vue";
-import LostPackagesPage from "./components/LostPackagesPage.vue";
-import ProfilePage from "./components/ProfilePage.vue";
-import ReportsPage from "./components/ReportsPage.vue";
-import HistoryPage from "./components/HistoryPage.vue";
-</script>
-
 <template>
   <div>
-    <router-link to="/">Home</router-link>
-    <router-link to="/profile">Profile</router-link>
-    <router-link to="/reports">Reports</router-link>
-    <router-link to="/lost-packages">Lost Packages</router-link>
-    <router-link to="/history">History</router-link>
+    <nav class="nav-bar">
+      <router-link to="/" class="link">Home</router-link>
+      <router-link to="/profile" class="link">Profile</router-link>
+      <router-link to="/reports" class="link">Reports</router-link>
+      <router-link to="/lost-packages" class="link">Lost Packages</router-link>
+      <router-link to="/history" class="link">History</router-link>
+    </nav>
+    <!-- This is where the pages load -->
+    <router-view />
   </div>
-  <HomePage />
-  <HistoryPage />
-  <LostPackagesPage />
-  <ProfilePage />
-  <ReportsPage />
 </template>
