@@ -2,34 +2,42 @@
   --umbc-gold: #fdb515;
   --umbc-black: #000000;
   --umbc-highlight: #fedd93;
+  --umbc-red: #da2128;
+  --umbc-light-gray: #c7c8ca;
+  --umbc-aok-teal: #007176;
+  --umbc-retriever-brown: #a67a05;
+  --umbc-dark-gray: #636466;
 }
 
 * {
   font-family: Inter, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-bar {
   display: flex;
   background: var(--umbc-gold);
   font-size: 24px;
+  font-weight: 500;
   justify-content: space-evenly;
   align-items: center;
   margin: auto;
   margin-top: 15px;
   border-radius: 0.25rem;
   height: auto;
-  max-width: 80%;
+  max-width: 90%;
 }
 
 .link {
   color: var(--umbc-black);
   text-decoration: none;
   transition: all 0.2s ease-in-out;
-  padding: 5px;
+  padding: 10px;
 }
 
 .link:hover {
   color: var(--umbc-black);
-  text-underline-offset: 2px;
   background: var(--umbc-highlight);
+  padding: 10px;
 }
