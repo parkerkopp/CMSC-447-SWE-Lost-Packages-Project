@@ -1,12 +1,15 @@
 <template>
   <div>
-    <img
-      src="./assets/UMBC-primary-logo.png"
-      alt="UMBC logo"
-      width="300"
-      height="75"
-      class="logo"
-    />
+    <div class="logo-container">
+      <img
+        src="./assets/UMBC_black_yellow_logo.jpg"
+        alt="UMBC logo"
+        width="200"
+        height="46"
+        class="logo"
+      />
+    </div>
+    <span class="header-bar"></span>
     <h1 id="welcome-title" :style="{ textAlign: 'center' }">
       Welcome To UMBC Lost Package Services
     </h1>

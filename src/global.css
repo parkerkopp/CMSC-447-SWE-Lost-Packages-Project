@@ -42,12 +42,19 @@
   padding: 10px;
 }
 
-.logo {
-  display: flex;
-  margin: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
+.logo-container {
+  background: var(--umbc-black);
+  height: 100%;
+  padding: 15px;
 }
+
+.header-bar {
+  display: block;
+  background-color: var(--umbc-gold);
+  height: 10px;
+  width: 100%;
+}
+
 #welcome-title {
   font-weight: 500;
   margin-top: 20px;
