@@ -29,7 +29,7 @@ const loadData = () => {
   try {
     // Example query - adjust table name and columns to match your database
     data.value = query("SELECT * FROM department_info");
-    console.log(query("SELECT * FROM department_info"));
+    console.log(data.value);
   } catch (err) {
     console.error("Failed to load data:", err);
   }
