@@ -30,20 +30,6 @@
   </div>
 </template>
 
-<style scoped>
-.logo {
-  display: flex;
-  margin: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-#welcome-title {
-  font-weight: 500;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-</style>
-
 <script>
 export default {
   methods: {

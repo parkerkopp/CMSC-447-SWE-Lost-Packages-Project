@@ -41,3 +41,15 @@
   background: var(--umbc-highlight);
   padding: 10px;
 }
+
+.logo {
+  display: flex;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+#welcome-title {
+  font-weight: 500;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
