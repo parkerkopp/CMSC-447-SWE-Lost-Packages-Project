@@ -8,7 +8,6 @@
         height="46"
         class="logo"
       />
-      <!-- test -->
     </div>
     <span class="header-bar"></span>
     <h1 id="welcome-title" :style="{ textAlign: 'center' }">
