@@ -23,7 +23,7 @@
   justify-content: space-evenly;
   align-items: center;
   margin: auto;
-  margin-top: 15px;
+  margin-top: -5px;
   border-radius: 0.25rem;
   height: auto;
   max-width: 90%;
@@ -57,6 +57,6 @@
 
 #welcome-title {
   font-weight: 500;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  background-color: var(--umbc-light-gray);
+  padding: 15px;
 }
