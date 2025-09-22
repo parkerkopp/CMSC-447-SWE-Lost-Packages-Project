@@ -24,10 +24,6 @@
         <label for="building">What building was it found:</label>
         <input type="text" id="building" v-model="buildingInfo" required />
       </div>
-      <div class="form-group">
-        <label for="room">What is the current room (if any):</label>
-        <input type="text" id="room" v-model="roomInfo" />
-      </div>
 
       <button type="submit">Submit Package Info</button>
     </form>
@@ -41,7 +37,6 @@ import { ref } from "vue";
 const trackingNumber = ref("");
 const recipiantName = ref("");
 const buildingInfo = ref("");
-const roomInfo = ref("");
 
 /// 'emits' sends data to the parent component
 const emit = defineEmits(["formSubmit"]);
@@ -52,7 +47,6 @@ const reportFormSubmit = () => {
     tracking: trackingNumber.value,
     recipiant: recipiantName.value,
     building: buildingInfo.value,
-    room: roomInfo.value,
     collected: false,
   };
 
@@ -63,7 +57,6 @@ const reportFormSubmit = () => {
   trackingNumber.value = "";
   recipiantName.value = "";
   buildingInfo.value = "";
-  roomInfo.value = "";
 
   console.log(packageData);
 };
