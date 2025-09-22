@@ -17,46 +17,172 @@
 
 .nav-bar {
   display: flex;
-  background: var(--umbc-gold);
-  font-size: 24px;
-  font-weight: 500;
   justify-content: space-evenly;
   align-items: center;
-  margin: auto;
-  margin-top: -5px;
-  border-radius: 0.25rem;
-  height: auto;
-  max-width: 90%;
+  margin: 10px;
 }
 
-.link {
-  color: var(--umbc-black);
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-  padding: 10px;
+.reports-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border-top: 4px solid var(--umbc-gold);
 }
 
-.link:hover {
+.reports-container h1 {
   color: var(--umbc-black);
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.reports-container h1::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--umbc-gold);
+  border-radius: 2px;
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--umbc-black);
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid var(--umbc-light-gray);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--umbc-dark-gray);
+  opacity: 0.7;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--umbc-gold);
+  box-shadow: 0 0 0 3px rgba(253, 181, 21, 0.15);
+  background-color: #fefefe;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: var(--umbc-aok-teal);
+}
+
+.form-group select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23636466' d='m0 1 2 2 2-2z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  appearance: none;
+}
+
+button[type="submit"] {
+  padding: 14px 28px;
+  background: var(--umbc-gold);
+  color: var(--umbc-black);
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button[type="submit"]:hover:not(:disabled) {
   background: var(--umbc-highlight);
-  padding: 10px;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.logo-container {
-  background: var(--umbc-black);
-  height: 100%;
-  padding: 15px;
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.header-bar {
-  display: block;
-  background-color: var(--umbc-gold);
-  height: 10px;
-  width: 100%;
+button[type="submit"]:disabled {
+  background: var(--umbc-light-gray);
+  color: var(--umbc-dark-gray);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-#welcome-title {
-  font-weight: 500;
-  background-color: var(--umbc-light-gray);
-  padding: 15px;
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.form-group input:invalid:not(:placeholder-shown),
+.form-group select:invalid:not(:placeholder-shown) {
+  border-color: var(--umbc-red);
+  box-shadow: 0 0 0 3px rgba(218, 33, 40, 0.15);
+}
+
+.form-group input:valid:not(:placeholder-shown),
+.form-group select:valid:not(:placeholder-shown) {
+  border-color: var(--umbc-aok-teal);
+}
+
+@media (max-width: 768px) {
+  .reports-container {
+    margin: 10px;
+    padding: 20px 15px;
+  }
+
+  .reports-container h1 {
+    font-size: 1.8rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 14px;
+  }
+
+  button[type="submit"] {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
 }
