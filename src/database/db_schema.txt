@@ -15,7 +15,7 @@ CREATE TABLE package_info (
 	 date 				varchar(10) not null, 
 	 carrier 			varchar(6) not null,
 	 notes          	varchar(100),
-	 delivered_status	varchar(20),
+	 delivered_status	varchar(20) not null,
 	 primary key (tracking_num),
 	 foreign key (building) references location_info
 );
