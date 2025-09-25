@@ -5,12 +5,30 @@
     <div v-if="error" class="error">Error: {{ error }}</div>
     <div v-else>
       <button @click="loadData">Load Data</button>
-      <ul>
-        <pre>
-          <li v-for="(item, index) in data" :key="index">
-            {{ item.tracking_num.padEnd(24) }}{{ item.recipient_name.padEnd(42)}}{{item.building.padEnd(47)}}{{ item.room_num.padEnd(5)}}{{ item.date.padEnd(12) }}{{ item.carrier.padEnd(8) }}{{ item.delivered_status.padEnd(20) }}
-          </li>
-        </pre>
+      <ul class="label-info" v-for="(item, index) in data" :key="index">
+        <li>
+          {{ item.tracking_num }}
+        </li>
+        <li>
+          {{ item.recipient_name }}
+        </li>
+        <li>
+          {{ item.building }}
+        </li>
+        <li>
+          {{ item.room_num }}
+        </li>
+
+        <li>
+          {{ item.date }}
+        </li>
+        <li>
+          {{ item.carrier }}
+        </li>
+        <li>
+          {{ item.delivered_status }}
+        </li>
+        <span class="divider"></span>
       </ul>
     </div>
   </div>
