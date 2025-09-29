@@ -4,35 +4,19 @@
     <form @submit.prevent="reportFormSubmit" class="report-form">
       <div class="form-group">
         <label for="tracking-num">Tracking Number:</label>
-        <input
-          type="text"
-          id="tracking-num"
-          v-model="trackingNumber"
-          maxlength="22"
-          required
-          placeholder="Enter tracking number"
-        />
+        <input type="text" id="tracking-num" v-model="trackingNumber" maxlength="22" required
+          placeholder="Enter tracking number" />
       </div>
       <div class="form-group">
         <label for="recipiant-name">Name on label:</label>
-        <input
-          type="text"
-          id="recipiant-name"
-          v-model="recipiantName"
-          maxlength="40"
-          required
-          placeholder="Name as it appears on the package"
-        />
+        <input type="text" id="recipiant-name" v-model="recipiantName" maxlength="40" required
+          placeholder="Name as it appears on the package" />
       </div>
       <div class="form-group">
         <label for="building">What building was it found:</label>
         <select v-model="buildingInfo" id="building" required>
           <option value="">Select building...</option>
-          <option
-            v-for="building in availableBuildings"
-            :key="building"
-            :value="building"
-          >
+          <option v-for="building in availableBuildings" :key="building" :value="building">
             {{ building }}
           </option>
         </select>
@@ -63,22 +47,12 @@
 
       <div class="form-group">
         <label for="date-found">Date Found:</label>
-        <input
-          type="date"
-          id="date-found"
-          v-model="dateFound"
-          :max="today"
-          required
-        />
+        <input type="date" id="date-found" v-model="dateFound" :max="today" required />
       </div>
       <div class="form-group">
         <label for="notes">Additional Notes (optional):</label>
-        <textarea
-          id="notes"
-          v-model="notes"
-          rows="3"
-          placeholder="Any additional information about the package condition, location details, etc."
-        ></textarea>
+        <textarea id="notes" v-model="notes" rows="3"
+          placeholder="Any additional information about the package condition, location details, etc."></textarea>
       </div>
 
       <button type="submit" :disabled="!isFormValid">
