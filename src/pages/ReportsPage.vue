@@ -1,35 +1,74 @@
 <template>
   <div class="reports-container">
-    <h1>Package Info</h1>
+    <h1>Package Report</h1>
     <form @submit.prevent="reportFormSubmit" class="report-form">
       <div class="form-group">
-        <label for="tracking-num">Tracking Number:</label>
-        <input type="text" id="tracking-num" v-model="trackingNumber" maxlength="22" required
-          placeholder="Enter tracking number" />
+        <label for="tracking-num">Tracking Number *</label>
+        <input
+          type="text"
+          id="tracking-num"
+          v-model="trackingNumber"
+          maxlength="22"
+          required
+          placeholder="Enter tracking number"
+        />
       </div>
       <div class="form-group">
-        <label for="recipiant-name">Name on label:</label>
-        <input type="text" id="recipiant-name" v-model="recipiantName" maxlength="40" required
-          placeholder="Name as it appears on the package" />
+        <label for="recipiant-name">Recipiant Name *</label>
+        <input
+          type="text"
+          id="recipiant-name"
+          v-model="recipiantName"
+          maxlength="40"
+          required
+          placeholder="Name as it appears on the package"
+        />
       </div>
       <div class="form-group">
-        <label for="building">What building was it found:</label>
+        <label for="building">Building *</label>
         <select v-model="buildingInfo" id="building" required>
-          <option value="">Select building...</option>
-          <option v-for="building in availableBuildings" :key="building" :value="building">
+          <option value="">Select building</option>
+          <option
+            v-for="building in availableBuildings"
+            :key="building"
+            :value="building"
+          >
             {{ building }}
           </option>
         </select>
       </div>
+
       <div class="form-group">
-        <label for="collected_status">Collection Status:</label>
-        <select id="collected-status" v-model="collectedStatus" required>
-          <option value="">Select status...</option>
-          <option value="NO">Not Collected</option>
-          <option value="YES">Collected</option>
-          <option value="TBD">To Be Determined</option>
-        </select>
+        <label for="room">Room Number</label>
+        <input
+          type="text"
+          id="room-num"
+          maxlength="8"
+          placeholder="Room number"
+        />
       </div>
+
+      <div class="form-group">
+        <label for="date-found">Date Found *</label>
+        <input
+          type="date"
+          id="date-found"
+          v-model="dateFound"
+          :max="today"
+          required
+        />
+      </div>
+
+      <!-- Debating on keeping this -->
+      <!-- <div class="form-group"> -->
+      <!--   <label for="collected_status">Collection Status:</label> -->
+      <!--   <select id="collected-status" v-model="collectedStatus" required> -->
+      <!--     <option value="">Select status...</option> -->
+      <!--     <option value="NO">Not Collected</option> -->
+      <!--     <option value="YES">Collected</option> -->
+      <!--     <option value="TBD">To Be Determined</option> -->
+      <!--   </select> -->
+      <!-- </div> -->
 
       <!-- Typical package labels -->
       <div class="form-group">
@@ -46,13 +85,13 @@
       </div>
 
       <div class="form-group">
-        <label for="date-found">Date Found:</label>
-        <input type="date" id="date-found" v-model="dateFound" :max="today" required />
-      </div>
-      <div class="form-group">
         <label for="notes">Additional Notes (optional):</label>
-        <textarea id="notes" v-model="notes" rows="3"
-          placeholder="Any additional information about the package condition, location details, etc."></textarea>
+        <textarea
+          id="notes"
+          v-model="notes"
+          rows="3"
+          placeholder="Any additional information about the package condition, location details, etc."
+        ></textarea>
       </div>
 
       <button type="submit" :disabled="!isFormValid">
@@ -69,7 +108,8 @@ import { ref, computed } from "vue";
 const trackingNumber = ref("");
 const recipiantName = ref("");
 const buildingInfo = ref("");
-const collectedStatus = ref("");
+const roomInfo = ref("");
+// const collectedStatus = ref("");
 const carrier = ref("");
 const dateFound = ref("");
 const notes = ref("");
@@ -118,7 +158,8 @@ const isFormValid = computed(() => {
     trackingNumber.value.trim() !== "" &&
     recipiantName.value.trim() !== "" &&
     buildingInfo.value !== "" &&
-    collectedStatus !== "" &&
+    roomInfo.value !== "" &&
+    // collectedStatus !== "" &&
     dateFound.value !== ""
   );
 });
@@ -136,7 +177,8 @@ const reportFormSubmit = () => {
     tracking_num: trackingNumber.value.trim(),
     recipiant_name: recipiantName.value.trim(),
     current_building: buildingInfo.value,
-    collected_status: collectedStatus.value,
+    current_room: roomInfo.value.trim(),
+    // collected_status: collectedStatus.value,
     carrier: carrier.value || null,
     date_found: dateFound.value,
     notes: notes.value.trim() || null,
@@ -152,7 +194,8 @@ const clearForm = () => {
   trackingNumber.value = "";
   recipiantName.value = "";
   buildingInfo.value = "";
-  collectedStatus.value = "";
+  roomInfo.value = "";
+  // collectedStatus.value = "";
   carrier.value = "";
   dateFound.value = "";
   notes.value = "";
