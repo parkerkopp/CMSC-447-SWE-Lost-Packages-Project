@@ -4,31 +4,19 @@
     <div v-if="loading">Loading database...</div>
     <div v-if="error" class="error">Error: {{ error }}</div>
     <div v-else>
-      <button @click="loadData">Load Data</button>
-      <ul class="label-info" v-for="(item, index) in data" :key="index">
-        <li>
-          {{ item.tracking_num }}
+      <ul class="packages-list">
+        <li v-for="item in packages" :key="item.id" class="package-item">
+          <div class="label-info">
+            <p><strong>Tracking #:</strong> {{ item.tracking_num }}</p>
+            <p><strong>Recipient:</strong> {{ item.recipient_name }}</p>
+            <p><strong>Building:</strong> {{ item.building }}</p>
+            <p><strong>Room:</strong> {{ item.room_num }}</p>
+            <p><strong>Date:</strong> {{ item.date }}</p>
+            <p><strong>Carrier:</strong> {{ item.carrier }}</p>
+            <p><strong>Notes:</strong> {{ item.notes }}</p>
+          </div>
+          <span class="divider"></span>
         </li>
-        <li>
-          {{ item.recipient_name }}
-        </li>
-        <li>
-          {{ item.building }}
-        </li>
-        <li>
-          {{ item.room_num }}
-        </li>
-
-        <li>
-          {{ item.date }}
-        </li>
-        <li>
-          {{ item.carrier }}
-        </li>
-        <li>
-          {{ item.delivered_status }}
-        </li>
-        <span class="divider"></span>
       </ul>
     </div>
   </div>
@@ -36,22 +24,39 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useDatabase } from "../composables/AccessDatabase.js";
+import { supabase } from "../composables/supabase";
 
-const { initDatabase, query, loading, error } = useDatabase();
-const data = ref([]);
+const packages = ref([]);
+const loading = ref(false);
+const error = ref(null); // Must be declared
 
+// const loadData = () => {
+//   try {
+//     // Example query - adjust table name and columns to match your database
+//   const { data } = await supabase
+//     .from("package")
+//     .select("*");
+//     console.log(data.value);
+//   } catch (err) {
+//     console.error("Failed to load data:", err);
+//   }
+// };
 onMounted(async () => {
-  await initDatabase();
-});
+  loading.value = true;
+  error.value = null;
 
-const loadData = () => {
-  try {
-    // Example query - adjust table name and columns to match your database
-    data.value = query("SELECT * FROM package_info");
-    console.log(data.value);
-  } catch (err) {
-    console.error("Failed to load data:", err);
+  const { data, error: fetchError } = await supabase
+    .from("package")
+    .select("*");
+
+  if (fetchError) {
+    error.value = fetchError.message;
+    console.error("Error fetching data:", fetchError);
+  } else {
+    packages.value = data;
+    console.log(data);
   }
-};
+
+  loading.value = false;
+});
 </script>
