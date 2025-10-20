@@ -103,6 +103,9 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { supabase } from "../composables/supabase";
+
+const isLoading = ref(false);
 
 // reactive variables to hold the package info data
 const trackingNumber = ref("");
@@ -158,7 +161,7 @@ const isFormValid = computed(() => {
     trackingNumber.value.trim() !== "" &&
     recipiantName.value.trim() !== "" &&
     buildingInfo.value !== "" &&
-    roomInfo.value !== "" &&
+    roomInfo.value.trim() !== "" &&
     // collectedStatus !== "" &&
     dateFound.value !== ""
   );
@@ -183,6 +186,14 @@ const reportFormSubmit = () => {
     date_found: dateFound.value,
     notes: notes.value.trim() || null,
   };
+
+  try {
+    isLoading.value = true;
+    const { data, error } = await supabase.from("package").insert([packageData]).select(); // returns the new row(s) from the DB
+  } catch (error) {
+    console.error("Error submitting package:", error.message);
+    alert(`Error submitting report: ${error.message}`);
+  }
 
   // Emits the data to the parent component
   emit("formSubmit", packageData);
