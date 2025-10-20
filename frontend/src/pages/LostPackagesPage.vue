@@ -46,7 +46,7 @@ onMounted(async () => {
   error.value = null;
 
   const { data, error: fetchError } = await supabase
-    .from("package")
+    .from("lost_package")
     .select("*");
 
   if (fetchError) {

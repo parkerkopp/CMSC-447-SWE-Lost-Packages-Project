@@ -14,11 +14,11 @@
         />
       </div>
       <div class="form-group">
-        <label for="recipiant-name">Recipiant Name *</label>
+        <label for="recipient-name">Recipient Name *</label>
         <input
           type="text"
-          id="recipiant-name"
-          v-model="recipiantName"
+          id="recipient-name"
+          v-model="recipientName"
           maxlength="40"
           required
           placeholder="Name as it appears on the package"
@@ -59,17 +59,6 @@
         />
       </div>
 
-      <!-- Debating on keeping this -->
-      <!-- <div class="form-group"> -->
-      <!--   <label for="collected_status">Collection Status:</label> -->
-      <!--   <select id="collected-status" v-model="collectedStatus" required> -->
-      <!--     <option value="">Select status...</option> -->
-      <!--     <option value="NO">Not Collected</option> -->
-      <!--     <option value="YES">Collected</option> -->
-      <!--     <option value="TBD">To Be Determined</option> -->
-      <!--   </select> -->
-      <!-- </div> -->
-
       <!-- Typical package labels -->
       <div class="form-group">
         <label for="carrier">Shipping Carrier (optional):</label>
@@ -105,17 +94,19 @@
 import { ref, computed } from "vue";
 import { supabase } from "../composables/supabase";
 
-const isLoading = ref(false);
-
 // reactive variables to hold the package info data
 const trackingNumber = ref("");
-const recipiantName = ref("");
+const recipientName = ref("");
 const buildingInfo = ref("");
 const roomInfo = ref("");
-// const collectedStatus = ref("");
 const carrier = ref("");
 const dateFound = ref("");
 const notes = ref("");
+
+// Submission state
+const isSubmitting = ref(false);
+const submitSuccess = ref(false);
+const submitError = ref(null);
 
 const availableBuildings = ref([
   "Academic Services",
@@ -157,56 +148,79 @@ const today = new Date().toISOString().split("T")[0];
 
 // Form validation
 const isFormValid = computed(() => {
-  return (
+  const valid =
     trackingNumber.value.trim() !== "" &&
-    recipiantName.value.trim() !== "" &&
+    recipientName.value.trim() !== "" &&
     buildingInfo.value !== "" &&
-    roomInfo.value.trim() !== "" &&
-    // collectedStatus !== "" &&
-    dateFound.value !== ""
-  );
+    dateFound.value !== "";
+  console.log("Form valid:", valid, {
+    tracking: trackingNumber.value,
+    name: recipientName.value,
+    building: buildingInfo.value,
+    date: dateFound.value,
+  });
+  return valid;
 });
 
 /// 'emits' sends data to the parent component
-const emit = defineEmits(["formSubmit"]);
+// const emit = defineEmits(["formSubmit"]);
 
-const reportFormSubmit = () => {
+const reportFormSubmit = async () => {
   if (!isFormValid.value) {
     alert("Please fill in all required fields.");
     return;
   }
+
+  // Reset messages
+  submitSuccess.value = false;
+  submitError.value = null;
+  isSubmitting.value = true;
+
   // package object with the current package form data
   const packageData = {
     tracking_num: trackingNumber.value.trim(),
-    recipiant_name: recipiantName.value.trim(),
-    current_building: buildingInfo.value,
-    current_room: roomInfo.value.trim(),
-    // collected_status: collectedStatus.value,
+    recipient_name: recipientName.value.trim(),
+    building: buildingInfo.value,
+    room_num: roomInfo.value.trim(),
     carrier: carrier.value || null,
-    date_found: dateFound.value,
+    date: dateFound.value,
     notes: notes.value.trim() || null,
   };
 
   try {
-    isLoading.value = true;
-    const { data, error } = await supabase.from("package").insert([packageData]).select(); // returns the new row(s) from the DB
+    // Insert data into Supabase
+    const { data, error } = await supabase
+      .from("lost_package")
+      .insert([packageData])
+      .select(); // returns the new row(s) from the DB
+
+    if (error) {
+      throw error;
+    }
+
+    console.log("Package inserted successfully:", data);
+    submitSuccess.value = true;
+
+    // Clear form after successful Submission
+    clearForm();
+
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      submitSuccess.value = false;
+    }, 3000);
   } catch (error) {
     console.error("Error submitting package:", error.message);
     alert(`Error submitting report: ${error.message}`);
+  } finally {
+    isSubmitting.value = false;
   }
-
-  // Emits the data to the parent component
-  emit("formSubmit", packageData);
-
-  clearForm();
 };
 
 const clearForm = () => {
   trackingNumber.value = "";
-  recipiantName.value = "";
+  recipientName.value = "";
   buildingInfo.value = "";
   roomInfo.value = "";
-  // collectedStatus.value = "";
   carrier.value = "";
   dateFound.value = "";
   notes.value = "";
