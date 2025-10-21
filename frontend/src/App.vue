@@ -6,6 +6,7 @@
       <router-link to="/reports" class="link">Reports</router-link>
       <router-link to="/lost-packages" class="link">Lost Packages</router-link>
     </nav>
+    <span class="divider"></span>
     <!-- This is where the pages load -->
     <router-view />
   </div>
