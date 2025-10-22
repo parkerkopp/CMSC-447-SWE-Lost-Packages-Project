@@ -1,92 +1,106 @@
 <template>
   <div class="reports-container">
-    <h1>Package Report</h1>
-    <form @submit.prevent="reportFormSubmit" class="report-form">
-      <div class="form-group">
-        <label for="tracking-num">Tracking Number *</label>
-        <input
-          type="text"
-          id="tracking-num"
-          v-model="trackingNumber"
-          maxlength="22"
-          required
-          placeholder="Enter tracking number"
-        />
-      </div>
-      <div class="form-group">
-        <label for="recipient-name">Recipient Name *</label>
-        <input
-          type="text"
-          id="recipient-name"
-          v-model="recipientName"
-          maxlength="40"
-          required
-          placeholder="Name as it appears on the package"
-        />
-      </div>
-      <div class="form-group">
-        <label for="building">Building *</label>
-        <select v-model="buildingInfo" id="building" required>
-          <option value="">Select building</option>
-          <option
-            v-for="building in availableBuildings"
-            :key="building"
-            :value="building"
-          >
-            {{ building }}
-          </option>
-        </select>
-      </div>
+    <div class="report-title-container">
+      <img src="../assets/package.png" alt="package" class="icon" />
+      <h1 class="report-title">Package Report</h1>
+    </div>
+    <p class="subtitle">
+      Enter package information for tracking and delivery management
+    </p>
+    <div class="reports-form-container">
+      <p class="form-section-title">New Package Entry</p>
+      <form @submit.prevent="reportFormSubmit" class="report-form">
+        <div class="form-group">
+          <label for="tracking-num">Tracking Number *</label>
+          <input
+            type="text"
+            id="tracking-num"
+            v-model="trackingNumber"
+            maxlength="22"
+            required
+            placeholder="Enter tracking number"
+          />
+        </div>
+        <div class="form-group">
+          <label for="recipient-name">Recipient Name *</label>
+          <input
+            type="text"
+            id="recipient-name"
+            v-model="recipientName"
+            maxlength="40"
+            required
+            placeholder="Name as it appears on the package"
+          />
+        </div>
+        <div class="form-group">
+          <label for="building">Building *</label>
+          <select v-model="buildingInfo" id="building" required>
+            <option value="">Select building</option>
+            <option
+              v-for="building in availableBuildings"
+              :key="building"
+              :value="building"
+            >
+              {{ building }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="room">Room Number</label>
-        <input
-          type="text"
-          id="room-num"
-          maxlength="8"
-          placeholder="Room number"
-        />
-      </div>
+        <div class="form-group">
+          <label for="room">Room Number</label>
+          <input
+            type="text"
+            id="room-num"
+            maxlength="8"
+            placeholder="Room number"
+          />
+        </div>
 
-      <div class="form-group">
-        <label for="date-found">Date Found *</label>
-        <input
-          type="date"
-          id="date-found"
-          v-model="dateFound"
-          :max="today"
-          required
-        />
-      </div>
+        <div class="form-group">
+          <label for="date-found">Date Found *</label>
+          <input
+            type="date"
+            id="date-found"
+            v-model="dateFound"
+            :max="today"
+            required
+          />
+        </div>
 
-      <!-- Typical package labels -->
-      <div class="form-group">
-        <label for="carrier">Shipping Carrier (optional):</label>
-        <select id="carrier" v-model="carrier">
-          <option value="">Select carrier...</option>
-          <option value="UPS">UPS</option>
-          <option value="FedEx">FedEx</option>
-          <option value="USPS">USPS</option>
-          <option value="DHL">DHL</option>
-          <option value="Amazon">Amazon</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
+        <!-- Typical package labels -->
+        <div class="form-group">
+          <label for="carrier">Shipping Carrier (optional):</label>
+          <select id="carrier" v-model="carrier">
+            <option value="">Select carrier...</option>
+            <option value="UPS">UPS</option>
+            <option value="FedEx">FedEx</option>
+            <option value="USPS">USPS</option>
+            <option value="DHL">DHL</option>
+            <option value="Amazon">Amazon</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="notes">Additional Notes (optional):</label>
-        <textarea
-          id="notes"
-          v-model="notes"
-          rows="3"
-          placeholder="Any additional information about the package condition, location details, etc."
-        ></textarea>
-      </div>
+        <div class="form-group full-width">
+          <label for="notes">Additional Notes (optional):</label>
+          <textarea
+            id="notes"
+            v-model="notes"
+            rows="3"
+            placeholder="Any additional information about the package condition, location details, etc."
+          ></textarea>
+        </div>
 
-      <button type="submit" :disabled="!isFormValid">
-        Submit Package Info
-      </button>
-    </form>
+        <div class="button-group full-width">
+          <button type="submit" class="submit-btn" :disabled="!isFormValid">
+            Submit Package Info
+          </button>
+          <button type="button" class="clear-btn" @click="clearForm">
+            Clear Form
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -148,22 +162,13 @@ const today = new Date().toISOString().split("T")[0];
 
 // Form validation
 const isFormValid = computed(() => {
-  const valid =
+  return (
     trackingNumber.value.trim() !== "" &&
     recipientName.value.trim() !== "" &&
     buildingInfo.value !== "" &&
-    dateFound.value !== "";
-  console.log("Form valid:", valid, {
-    tracking: trackingNumber.value,
-    name: recipientName.value,
-    building: buildingInfo.value,
-    date: dateFound.value,
-  });
-  return valid;
+    dateFound.value !== ""
+  );
 });
-
-/// 'emits' sends data to the parent component
-// const emit = defineEmits(["formSubmit"]);
 
 const reportFormSubmit = async () => {
   if (!isFormValid.value) {
