@@ -22,7 +22,23 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  margin: 10px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  height: 32px;
+  width: 32px;
+  margin: 5px;
+}
+
+.title {
+  text-align: center;
+  font-size: 32px;
+  margin: 10px 0;
 }
 
 .link {
