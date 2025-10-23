@@ -7,11 +7,11 @@
       </div>
       <div class="link-container">
         <router-link to="/" class="link">Home</router-link>
-        <router-link to="/profile" class="link">Profile</router-link>
         <router-link to="/reports" class="link">Reports</router-link>
         <router-link to="/lost-packages" class="link"
           >Lost Packages</router-link
         >
+        <router-link to="/profile" class="link">Profile</router-link>
       </div>
     </nav>
     <span class="divider"></span>
