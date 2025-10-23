@@ -221,6 +221,10 @@ const reportFormSubmit = async () => {
   }
 };
 
+const validateTrackingNum = (trackingNum) => {};
+const validateRecipiant = (recipiant) => {};
+const carrierAPICheck = (carrier) => {};
+
 const clearForm = () => {
   trackingNumber.value = "";
   recipientName.value = "";
