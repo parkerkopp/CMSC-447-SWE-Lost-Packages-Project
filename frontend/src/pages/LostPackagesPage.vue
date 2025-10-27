@@ -102,17 +102,6 @@ const filteredPackages = computed(() => {
   });
 });
 
-// const loadData = () => {
-//   try {
-//     // Example query - adjust table name and columns to match your database
-//   const { data } = await supabase
-//     .from("package")
-//     .select("*");
-//     console.log(data.value);
-//   } catch (err) {
-//     console.error("Failed to load data:", err);
-//   }
-// };
 onMounted(async () => {
   try {
     loading.value = true;
