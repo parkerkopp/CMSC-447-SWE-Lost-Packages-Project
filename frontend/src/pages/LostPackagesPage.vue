@@ -30,17 +30,6 @@ const packages = ref([]);
 const loading = ref(false);
 const error = ref(null); // Must be declared
 
-// const loadData = () => {
-//   try {
-//     // Example query - adjust table name and columns to match your database
-//   const { data } = await supabase
-//     .from("package")
-//     .select("*");
-//     console.log(data.value);
-//   } catch (err) {
-//     console.error("Failed to load data:", err);
-//   }
-// };
 onMounted(async () => {
   loading.value = true;
   error.value = null;

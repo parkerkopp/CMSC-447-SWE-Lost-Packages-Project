@@ -47,10 +47,11 @@
         </div>
 
         <div class="form-group">
-          <label for="room">Room Number</label>
+          <label for="room-num">Room Number</label>
           <input
             type="text"
             id="room-num"
+            v-model="roomNum"
             maxlength="8"
             placeholder="Room number"
           />
@@ -112,7 +113,7 @@ import { supabase } from "../composables/supabase";
 const trackingNumber = ref("");
 const recipientName = ref("");
 const buildingInfo = ref("");
-const roomInfo = ref("");
+const roomNum = ref("");
 const carrier = ref("");
 const dateFound = ref("");
 const notes = ref("");
@@ -186,7 +187,7 @@ const reportFormSubmit = async () => {
     tracking_num: trackingNumber.value.trim(),
     recipient_name: recipientName.value.trim(),
     building: buildingInfo.value,
-    room_num: roomInfo.value.trim(),
+    room_num: roomNum.value.trim(),
     carrier: carrier.value || null,
     date: dateFound.value,
     notes: notes.value.trim() || null,
@@ -229,7 +230,7 @@ const clearForm = () => {
   trackingNumber.value = "";
   recipientName.value = "";
   buildingInfo.value = "";
-  roomInfo.value = "";
+  roomNum.value = "";
   carrier.value = "";
   dateFound.value = "";
   notes.value = "";
