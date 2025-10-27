@@ -4,9 +4,9 @@
       <h1>Lost Packages</h1>
       <p class="subtitle">View and manage package delivery status</p>
     </div>
-    <div v-if="loading">Loading database...</div>
     <div v-if="error" class="error">Error: {{ error }}</div>
-    <div v-else>
+    <div v-if="loading" class="loading">Loading database...</div>
+    <div v-else-if="!error">
       <!-- Filter Section -->
       <div class="filter-section">
         <input 
@@ -88,9 +88,14 @@ const clearFilters = () => {
 // Computed property for filtered packages
 const filteredPackages = computed(() => {
   return packages.value.filter(pkg => {
-    const trackingMatch = pkg.tracking_num.toLowerCase().includes(filters.value.trackingNum.toLowerCase());
-    const carrierMatch = pkg.carrier.toLowerCase().includes(filters.value.carrier.toLowerCase());
-    const buildingMatch = pkg.building.toLowerCase().includes(filters.value.building.toLowerCase());
+    // Handle null values by converting them to empty strings
+    const tracking = (pkg.tracking_num || '').toString();
+    const carrier = (pkg.carrier || '').toString();
+    const building = (pkg.building || '').toString();
+    
+    const trackingMatch = tracking.toLowerCase().includes(filters.value.trackingNum.toLowerCase());
+    const carrierMatch = carrier.toLowerCase().includes(filters.value.carrier.toLowerCase());
+    const buildingMatch = building.toLowerCase().includes(filters.value.building.toLowerCase());
     const statusMatch = filters.value.status === '' || 'Not Delivered'.toLowerCase().includes(filters.value.status.toLowerCase());
     
     return trackingMatch && carrierMatch && buildingMatch && statusMatch;
@@ -109,22 +114,32 @@ const filteredPackages = computed(() => {
 //   }
 // };
 onMounted(async () => {
-  loading.value = true;
-  error.value = null;
+  try {
+    loading.value = true;
+    error.value = null;
+    packages.value = []; // Reset packages before fetching
 
-  const { data, error: fetchError } = await supabase
-    .from("lost_package")
-    .select("*");
+    const { data, error: fetchError } = await supabase
+      .from("lost_package")
+      .select("*");
 
-  if (fetchError) {
-    error.value = fetchError.message;
-    console.error("Error fetching data:", fetchError);
-  } else {
-    packages.value = data;
-    console.log(data);
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    if (data) {
+      packages.value = data;
+      console.log("Fetched packages:", data);
+    } else {
+      packages.value = [];
+      console.log("No data returned from database");
+    }
+  } catch (err) {
+    error.value = err.message;
+    console.error("Error fetching data:", err);
+  } finally {
+    loading.value = false;
   }
-
-  loading.value = false;
 });
 </script>
 
