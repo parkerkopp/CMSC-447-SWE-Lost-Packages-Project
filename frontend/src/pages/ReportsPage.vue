@@ -193,15 +193,28 @@ const reportFormSubmit = async () => {
     notes: notes.value.trim() || null,
   };
 
+  const reportData = {
+    worker_id: "Not Assigned",
+    completed_status: "Not Delivered",
+    tracking_num: packageData.tracking_num,
+  };
+
   try {
     // Insert data into Supabase
-    const { data, error } = await supabase
+    const { data: packageInfo, error: packageError } = await supabase
       .from("lost_package")
       .insert([packageData])
       .select(); // returns the new row(s) from the DB
 
-    if (error) {
-      throw error;
+    if (packageError) {
+      throw packageError;
+    }
+    const { data: reportInfo, error: reportError } = await supabase
+      .from("report")
+      .insert([reportData]);
+
+    if (reportError) {
+      throw reportError;
     }
 
     console.log("Package inserted successfully:", data);
