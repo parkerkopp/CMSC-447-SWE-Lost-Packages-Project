@@ -110,22 +110,25 @@ const fetchStats = async () => {
     // Get active packages (not delivered)
     const { count: activeCount, error: activeError } = await supabase
       .from("lost_package")
-      .select("*", { count: "exact", head: ture })
-      .neq("delivery_status", "Delivered");
+      .select("*", { count: "exact", head: true });
 
     if (!activeError) {
       stats.value.activePackages = activeCount || 0;
     }
 
+    stats.value.activePackages = activeCount;
+
     // Get pending reports (assuming reports with specific status)
     const { count: pendingCount, error: pendingError } = await supabase
       .from("report")
       .select("*", { count: "exact", head: true })
-      .eq("completed_status", "Pending");
+      .eq("completed_status", "Not Delivered");
 
     if (!pendingError) {
       stats.value.pendingReports = pendingCount || 0;
     }
+
+    stats.value.pendingReports = pendingCount;
 
     // Get active staff count
     const { count: staffCount, error: staffError } = await supabase
@@ -135,6 +138,8 @@ const fetchStats = async () => {
     if (!staffError) {
       stats.value.activeStaff = staffCount || 0;
     }
+
+    stats.value.activeStaff = staffCount;
   } catch (error) {
     console.error("Error fetching stats:", error);
   }
