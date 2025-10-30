@@ -422,3 +422,278 @@
   background-color: var(--umbc-black);
   color: white;
 }
+
+/* Profile page */
+
+/* Basic Page Setup */
+.profile-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.profile-page-content {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Page Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-header img {
+  height: 32px;
+  width: 32px;
+}
+
+.profile-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--umbc-black);
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 48px;
+  font-size: 18px;
+  color: var(--umbc-dark-gray);
+}
+
+/* Error State */
+.error-state {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #991b1b; /* Dark red */
+  background-color: var(--umbc-red); /* Light red */
+  border: 1px solid var(--umbc-red); /* Red border */
+  border-radius: 12px;
+}
+
+/* Layout Grid */
+.profile-content-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile-first: single column */
+  gap: 24px;
+}
+
+/* Columns */
+.profile-column-left,
+.profile-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Generic Card Style */
+.profile-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--umbc-light-gray);
+  flex-grow: 1;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--umbc-black);
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+}
+
+/* Left Column: Profile Summary Card */
+.profile-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  background-color: #cfcfcf;
+  color: var(--umbc-black);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--umbc-black);
+  text-align: center;
+  margin: 0;
+}
+
+.profile-position {
+  font-size: 16px;
+  color: var(--umbc-dark-gray);
+  margin: 4px 0 0 0;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #374151;
+}
+
+.contact-icon {
+  display: flex;
+}
+
+.contact-icon img {
+  margin-right: 12px;
+  width: 16px;
+  height: 16px;
+}
+
+.contact-text {
+  word-break: break-all;
+}
+
+/* Right Column: Employment Details Card */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 20px;
+}
+
+.detail-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--umbc-black);
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: var(--umbc-dark-gray);
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Right Column: Permissions Card */
+.permission-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.permission-tag {
+  background-color: #f0f0f0;
+  color: var(--umbc-dark-gray);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Right Column: Reports Card */
+.report-list-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.report-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.report-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px;
+}
+
+.report-list-item:last-child {
+  border-bottom: none;
+}
+
+.report-info {
+  margin-right: 12px;
+}
+
+.report-number {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4f46e5;
+  margin: 0;
+}
+
+.report-tracking {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+  word-break: break-all;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+
+.status-completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Empty state for reports */
+.empty-state {
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Responsive Breakpoint for 2-column layout */
+@media (min-width: 1024px) {
+  .profile-content-grid {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Responsive Breakpoint for details grid */
+@media (max-width: 640px) {
+  .details-grid {
+    grid-template-columns: 1fr; /* Single column on small screens */
+  }
+}
