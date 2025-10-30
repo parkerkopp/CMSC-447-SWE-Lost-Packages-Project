@@ -9,27 +9,29 @@
     <div v-else-if="!error">
       <!-- Filter Section -->
       <div class="filter-section">
-        <input 
+        <input
           v-model="filters.trackingNum"
           placeholder="Filter by tracking number"
           class="filter-input"
         />
-        <input 
+        <input
           v-model="filters.carrier"
           placeholder="Filter by carrier"
           class="filter-input"
         />
-        <input 
+        <input
           v-model="filters.building"
           placeholder="Filter by building"
           class="filter-input"
         />
-        <input 
+        <input
           v-model="filters.status"
           placeholder="Filter by status"
           class="filter-input"
         />
-        <button @click="clearFilters" class="clear-filters-btn">Clear Filters</button>
+        <button @click="clearFilters" class="clear-filters-btn">
+          Clear Filters
+        </button>
       </div>
       <div class="packages-table">
         <!-- Table Header -->
@@ -45,7 +47,11 @@
         </div>
         <!-- Table Body -->
         <div class="table-body">
-          <div v-for="item in filteredPackages" :key="item.id" class="table-row">
+          <div
+            v-for="item in filteredPackages"
+            :key="item.id"
+            class="table-row"
+          >
             <div>{{ item.tracking_num }}</div>
             <div>{{ item.recipient_name }}</div>
             <div>{{ item.building }}</div>
@@ -70,34 +76,44 @@ const loading = ref(false);
 const error = ref(null);
 
 const filters = ref({
-  trackingNum: '',
-  carrier: '',
-  building: '',
-  status: ''
+  trackingNum: "",
+  carrier: "",
+  building: "",
+  status: "",
 });
 
 const clearFilters = () => {
   filters.value = {
-    trackingNum: '',
-    carrier: '',
-    building: '',
-    status: ''
+    trackingNum: "",
+    carrier: "",
+    building: "",
+    status: "",
   };
 };
 
 // Computed property for filtered packages
 const filteredPackages = computed(() => {
-  return packages.value.filter(pkg => {
+  return packages.value.filter((pkg) => {
     // Handle null values by converting them to empty strings
-    const tracking = (pkg.tracking_num || '').toString();
-    const carrier = (pkg.carrier || '').toString();
-    const building = (pkg.building || '').toString();
-    
-    const trackingMatch = tracking.toLowerCase().includes(filters.value.trackingNum.toLowerCase());
-    const carrierMatch = carrier.toLowerCase().includes(filters.value.carrier.toLowerCase());
-    const buildingMatch = building.toLowerCase().includes(filters.value.building.toLowerCase());
-    const statusMatch = filters.value.status === '' || 'Not Delivered'.toLowerCase().includes(filters.value.status.toLowerCase());
-    
+    const tracking = (pkg.tracking_num || "").toString();
+    const carrier = (pkg.carrier || "").toString();
+    const building = (pkg.building || "").toString();
+
+    const trackingMatch = tracking
+      .toLowerCase()
+      .includes(filters.value.trackingNum.toLowerCase());
+    const carrierMatch = carrier
+      .toLowerCase()
+      .includes(filters.value.carrier.toLowerCase());
+    const buildingMatch = building
+      .toLowerCase()
+      .includes(filters.value.building.toLowerCase());
+    const statusMatch =
+      filters.value.status === "" ||
+      "Not Delivered"
+        .toLowerCase()
+        .includes(filters.value.status.toLowerCase());
+
     return trackingMatch && carrierMatch && buildingMatch && statusMatch;
   });
 });
