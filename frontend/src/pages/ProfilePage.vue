@@ -9,14 +9,17 @@
       </div>
 
       <!-- Loading State -->
-      <!-- This will display until the 'employeeProfile' object is populated by your fetch -->
-      <div v-if="!employeeProfile" class="loading-state">
+      <div v-if="loading" class="loading-state">
         <p>Loading profile data...</p>
+      </div>
+      
+      <!-- Error State -->
+      <div v-else-if="error" class="error-state">
+        <p>{{ error }}</p>
       </div>
 
       <!-- Profile Content Grid -->
-      <!-- This entire section will only render after 'employeeProfile' data is fetched -->
-      <div v-else class="profile-content-grid">
+      <div v-else-if="employeeProfile" class="profile-content-grid">
         
         <!-- Left Column -->
         <div class="profile-column-left">
@@ -95,7 +98,6 @@
           <div class="profile-card">
             <h3 class="card-title">Reports</h3>
             
-            <!-- This vIf will show the list only if reports are fetched -->
             <div v-if="reports.length > 0" class="report-list-container">
               <ul class="report-list">
                 <li v-for="report in reports" :key="report.report_num" class="report-list-item">
@@ -110,7 +112,6 @@
               </ul>
             </div>
             
-            <!-- This v-else will show if the reports array is empty -->
             <div v-else class="empty-state">
               <p>No reports found for this worker.</p>
             </div>
@@ -124,74 +125,141 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-// Import your configured Supabase client
 import { supabase } from "../composables/supabase";
+// import { useRouter } from 'vue-router'; // Not needed for the temporary fix
 
 // --- Reactive Data ---
-// Initialized as null/empty. Data will be populated from fetchProfileData.
-const employeeProfile = ref(''); // Renamed from 'worker'
+const employeeProfile = ref(null);
 const reports = ref([]);
+const loading = ref(true); // Start in loading state
+const error = ref(null);   // For storing error messages
+// const router = useRouter(); // Not needed for the temporary fix
 
 // --- Computed Properties ---
-// Generates initials (e.g., "JM") from the employeeProfile's name
 const initials = computed(() => {
   if (employeeProfile.value && employeeProfile.value.worker_first_name && employeeProfile.value.worker_last_name) {
     const first = employeeProfile.value.worker_first_name[0] || '';
     const last = employeeProfile.value.worker_last_name[0] || '';
     return `${first}${last}`.toUpperCase();
   }
-  return ''; // Return empty string if not loaded
+  return '';
 });
 
+/**
+ * Fetches the profile and reports for a given worker ID.
+ */
+async function fetchProfileData(workerId) {
+  loading.value = true;
+  error.value = null;
 
-// --- Data Fetching Function ---
-async function fetchProfileData() {
-  
-  // --- TODO: REPLACE THIS ---
-  // You must get the currently logged-in worker's ID dynamically.
-  // This could be from Vue Router params (route.params.id) 
-  // or from your Supabase auth state (supabase.auth.user().id or metadata)
-  const currentWorkerId = 'EMP001'; 
-  // --------------------------
+  if (!workerId) {
+    error.value = "No worker ID provided.";
+    loading.value = false;
+    return;
+  }
 
   try {
     // 1. Fetch worker data from 'worker' table
+    // We use .limit(1) to get an array with just one row.
     const { data: workerData, error: workerError } = await supabase
       .from('worker')
       .select('*')
-      .eq('worker_id', currentWorkerId)
-      .single(); // Use .single() as we only expect one worker
+      .eq('worker_id', workerId) // Use the dynamic workerId
+      .limit(1); // Get only one record
 
     if (workerError) {
       console.error('Error fetching worker profile:', workerError.message);
-      throw workerError;
+      throw new Error(workerError.message);
+    }
+
+    // Check if the array is empty (this is what's happening now)
+    if (!workerData || workerData.length === 0) {
+      throw new Error(`Worker profile not found (ID: ${workerId}).`);
     }
     
-    employeeProfile.value = workerData; // This will hide the "Loading..." message
+    // Assign the *first item* from the array (index 0)
+    employeeProfile.value = workerData[0];
+
 
     // 2. Fetch reports data from 'report' table
     const { data: reportsData, error: reportsError } = await supabase
       .from('report')
       .select('*')
-      .eq('worker_id', currentWorkerId);
+      .eq('worker_id', workerId)
+      .order('report_num', { ascending: false }); // Order reports
 
     if (reportsError) {
       console.error('Error fetching reports:', reportsError.message);
-      throw reportsError;
+      // Don't throw, just log it. We can still show the profile.
+      error.value = "Could not load reports.";
     }
     
-    reports.value = reportsData; // This will populate the reports list
+    reports.value = reportsData || [];
 
-  } catch (error) {
-    console.error('Error in fetchProfileData:', error.message);
-    // You could set an error state here to show a message to the user
+  } catch (err) {
+    console.error('Error in fetchProfileData:', err.message);
+    error.value = err.message;
+    employeeProfile.value = null; // Clear profile on error
+  } finally {
+    loading.value = false; // Stop loading state
   }
 }
 
+/**
+ * Gets the current authenticated user session.
+ * --- TEMPORARILY COMMENTED OUT ---
+ * This is the correct long-term solution, but it requires
+ * you to have a /login route and working authentication.
+ */
+/*
+async function getUserSession() {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError) {
+      throw userError;
+    }
+
+    if (!user) {
+      error.value = "You are not logged in.";
+      router.push('/login'); 
+      return;
+    }
+
+    const userWorkerId = user.user_metadata?.worker_id; 
+
+    if (!userWorkerId) {
+      throw new Error("Your user account is not linked to a worker profile.");
+    }
+
+    await fetchProfileData(userWorkerId);
+
+  } catch (err) {
+    console.error("Auth error:", err.message);
+    error.value = err.message;
+    loading.value = false;
+    if (err.message !== "Your user account is not linked to a worker profile.") {
+      router.push('/login');
+    }
+  }
+}
+*/
+
 // --- Lifecycle Hooks ---
-// Fetch data when the component is first mounted
 onMounted(() => {
-  fetchProfileData();
+  // --- TEMPORARY FIX ---
+  // We are bypassing the login check and loading a static ID
+  // to let you see the page.
+  // Replace 'DD01234' with one of your real worker IDs.
+  fetchProfileData('DD01345');
+
+  // --- REAL FIX (use this later) ---
+  // Once you have a /login route and auth is working,
+  // comment out the line above and uncomment this one:
+  // getUserSession();
 });
 </script>
 
@@ -199,11 +267,11 @@ onMounted(() => {
 /* Basic Page Setup */
 .profile-page-container {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #f9fafb; /* Light gray background, matches Figma */
+  background-color: #f9fafb;
   min-height: 100vh;
   padding: 24px;
   box-sizing: border-box;
-  color: #1f2937; /* Dark text */
+  color: #1f2937;
 }
 
 .profile-page-content {
@@ -224,7 +292,7 @@ onMounted(() => {
 
 .profile-header p {
   font-size: 16px;
-  color: #6b7280; /* Medium gray */
+  color: #6b7280;
   margin: 4px 0 0 0;
 }
 
@@ -234,6 +302,17 @@ onMounted(() => {
   padding: 48px;
   font-size: 18px;
   color: #6b7280;
+}
+
+/* Error State */
+.error-state {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #991b1b; /* Dark red */
+  background-color: #fef2f2; /* Light red */
+  border: 1px solid #fca5a5; /* Red border */
+  border-radius: 12px;
 }
 
 /* Layout Grid */
@@ -248,7 +327,7 @@ onMounted(() => {
 .profile-column-right {
   display: flex;
   flex-direction: column;
-  gap: 24px; /* Space between cards in a column */
+  gap: 24px;
 }
 
 /* Generic Card Style */
@@ -256,7 +335,7 @@ onMounted(() => {
   background-color: #ffffff;
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid #e5e7eb; /* Light gray border */
+  border: 1px solid #e5e7eb;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
@@ -266,7 +345,7 @@ onMounted(() => {
   color: #111827;
   margin-top: 0;
   margin-bottom: 20px;
-  border-bottom: 1px solid #f3f4f6; /* Very light divider */
+  border-bottom: 1px solid #f3f4f6;
   padding-bottom: 12px;
 }
 
@@ -283,8 +362,8 @@ onMounted(() => {
 .profile-avatar {
   width: 96px;
   height: 96px;
-  background-color: #e0e7ff; /* Light indigo */
-  color: #4338ca; /* Dark indigo */
+  background-color: #e0e7ff;
+  color: #4338ca;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -327,8 +406,8 @@ onMounted(() => {
 .contact-icon {
   font-size: 16px;
   margin-right: 12px;
-  color: #9ca3af; /* Icon color */
-  width: 20px; /* Align text */
+  color: #9ca3af;
+  width: 20px;
   text-align: center;
 }
 
@@ -344,14 +423,13 @@ onMounted(() => {
 }
 
 .detail-item {
-  /* No extra margin needed */
 }
 
 .detail-label {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #6b7280; /* Medium gray */
+  color: #6b7280;
   margin-bottom: 4px;
 }
 
@@ -370,17 +448,16 @@ onMounted(() => {
 }
 
 .permission-tag {
-  background-color: #f3f4f6; /* Gray 100 */
-  color: #374151; /* Gray 700 */
+  background-color: #f3f4f6;
+  color: #374151;
   padding: 4px 12px;
-  border-radius: 9999px; /* Pill shape */
+  border-radius: 9999px;
   font-size: 14px;
   font-weight: 500;
 }
 
 /* Right Column: Reports Card */
 .report-list-container {
-  /* Container for potential scrolling */
   max-height: 300px;
   overflow-y: auto;
 }
@@ -395,8 +472,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 4px; /* Add horizontal padding for scrollbar */
-  border-bottom: 1px solid #f3f4f6; /* Light separator */
+  padding: 12px 4px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .report-list-item:last-child {
@@ -404,14 +481,13 @@ onMounted(() => {
 }
 
 .report-info {
-  /* Takes up available space */
   margin-right: 12px;
 }
 
 .report-number {
   font-size: 14px;
   font-weight: 500;
-  color: #4f46e5; /* Indigo */
+  color: #4f46e5;
   margin: 0;
 }
 
@@ -427,18 +503,18 @@ onMounted(() => {
   font-size: 12px;
   font-weight: 600;
   border-radius: 9999px;
-  flex-shrink: 0; /* Prevents badge from shrinking/wrapping */
+  flex-shrink: 0;
   text-transform: capitalize;
 }
 
 .status-completed {
-  background-color: #d1fae5; /* Green 100 */
-  color: #065f46; /* Green 800 */
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
 .status-pending {
-  background-color: #fef3c7; /* Yellow 100 */
-  color: #92400e; /* Yellow 800 */
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 /* Empty state for reports */
@@ -453,7 +529,6 @@ onMounted(() => {
 /* Responsive Breakpoint for 2-column layout */
 @media (min-width: 1024px) {
   .profile-content-grid {
-    /* 1/3 left column, 2/3 right column */
     grid-template-columns: 1fr 2fr; 
   }
 }
