@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.77.0"
+    "@supabase/supabase-js": "^2.77.0",
+    "vue-router": "^4.6.3"
   }
 }
