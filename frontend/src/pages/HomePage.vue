@@ -1,8 +1,8 @@
 <template>
   <div class="profile-page">
-    <div class="page-header">
-      <h1 class="page-title">Packge Tacking System</h1>
-      <p class="page-subtitle">
+    <div class="homepage-header">
+      <h1 class="homepage-title">Packge Tacking System</h1>
+      <p class="homepage-subtitle">
         Efficiently manage and track packages for UMBC campus. Report new
         packages, monitor lost items, and maintain delivery records.
       </p>
