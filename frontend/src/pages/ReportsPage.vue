@@ -194,7 +194,6 @@ const reportFormSubmit = async () => {
   };
 
   const reportData = {
-    worker_id: "Not Assigned",
     completed_status: "Not Delivered",
     tracking_num: packageData.tracking_num,
   };
@@ -217,7 +216,7 @@ const reportFormSubmit = async () => {
       throw reportError;
     }
 
-    console.log("Package inserted successfully:", data);
+    console.log("Package and report inserted successfully:", data);
     submitSuccess.value = true;
 
     // Clear form after successful Submission
