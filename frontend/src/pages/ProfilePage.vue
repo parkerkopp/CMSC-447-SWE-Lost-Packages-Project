@@ -58,7 +58,7 @@
                 <span class="contact-icon"
                   ><img src="../assets/business-and-trade.png" alt="building"
                 /></span>
-                <span class="contact-text">Student Services Building</span>
+                <span class="contact-text">Central Receiving Building</span>
               </li>
               <li class="contact-item">
                 <span class="contact-icon"
@@ -129,7 +129,9 @@
                       'status-badge',
                       report.completed_status === 'Completed'
                         ? 'status-completed'
-                        : 'status-pending',
+                        : report.completed_status === 'Pending' 
+                        ? 'status-pending'
+                        : 'status-incomplete',
                     ]"
                   >
                     {{ report.completed_status }}

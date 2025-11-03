@@ -14,7 +14,7 @@
     "sql.js": "^1.13.0",
     "sqlite3": "^5.1.7",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",

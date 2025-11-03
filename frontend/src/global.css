@@ -646,7 +646,7 @@
 .report-number {
   font-size: 14px;
   font-weight: 500;
-  color: #4f46e5;
+  color: var(--umbc-black);
   margin: 0;
 }
 
@@ -669,6 +669,11 @@
 .status-completed {
   background-color: #d1fae5;
   color: #065f46;
+}
+
+.status-incomplete {
+  background-color: #ffcbcb;
+  color: #991b1b;
 }
 
 .status-pending {
