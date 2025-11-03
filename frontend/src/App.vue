@@ -2,8 +2,12 @@
   <div>
     <nav class="nav-bar">
       <div class="title-container">
-        <img src="./assets/package.png" alt="package" class="icon" />
-        <h1 class="title">Lost Package Services</h1>
+        <img
+          src="./assets/UMBC-vertical-logo-1C-black.png"
+          alt="package"
+          class="icon"
+        />
+        <h1 class="title">UMBC Lost Package Services</h1>
       </div>
       <div class="link-container">
         <router-link to="/" class="link">Home</router-link>
