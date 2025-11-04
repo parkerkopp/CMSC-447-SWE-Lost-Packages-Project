@@ -234,13 +234,7 @@ async function fetchProfileData(workerId) {
   }
 }
 
-/**
- * Gets the current authenticated user session.
- * --- TEMPORARILY COMMENTED OUT ---
- * This is the correct long-term solution, but it requires
- * you to have a /login route and working authentication.
- */
-/*
+
 async function getUserSession() {
   loading.value = true;
   error.value = null;
@@ -275,7 +269,6 @@ async function getUserSession() {
     }
   }
 }
-*/
 
 // --- Lifecycle Hooks ---
 onMounted(() => {
@@ -283,11 +276,11 @@ onMounted(() => {
   // We are bypassing the login check and loading a static ID
   // to let you see the page.
   // Replace 'DD01234' with one of your real worker IDs.
-  fetchProfileData("DD01345");
+  //fetchProfileData("DD01345");
 
   // --- REAL FIX (use this later) ---
   // Once you have a /login route and auth is working,
   // comment out the line above and uncomment this one:
-  // getUserSession();
+  getUserSession();
 });
 </script>
