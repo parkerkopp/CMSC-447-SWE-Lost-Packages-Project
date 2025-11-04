@@ -7,6 +7,15 @@
     <p class="subtitle">
       Enter package information for tracking and delivery management
     </p>
+
+    <!-- NEW: Success/Error Messages -->
+    <div v-if="submitSuccess" class="success-message">
+      Package reported successfully!
+    </div>
+    <div v-if="submitError" class="error-message">
+      {{ submitError }}
+    </div>
+
     <div class="reports-form-container">
       <p class="form-section-title">New Package Entry</p>
       <form @submit.prevent="reportFormSubmit" class="report-form">
@@ -93,8 +102,8 @@
         </div>
 
         <div class="button-group full-width">
-          <button type="submit" class="submit-btn" :disabled="!isFormValid">
-            Submit Package Info
+          <button type="submit" class="submit-btn" :disabled="!isFormValid || isSubmitting">
+             {{ isSubmitting ? "Submitting..." : "Submit Package Info" }}
           </button>
           <button type="button" class="clear-btn" @click="clearForm">
             Clear Form
@@ -173,7 +182,7 @@ const isFormValid = computed(() => {
 
 const reportFormSubmit = async () => {
   if (!isFormValid.value) {
-    alert("Please fill in all required fields.");
+    submitError.value = "Please fill in all required fields.";
     return;
   }
 
@@ -229,7 +238,7 @@ const reportFormSubmit = async () => {
     }, 3000);
   } catch (error) {
     console.error("Error submitting package:", error.message);
-    alert(`Error submitting report: ${error.message}`);
+    submitError.value = `Error submitting report: ${error.message}`;
   } finally {
     isSubmitting.value = false;
   }
@@ -249,3 +258,5 @@ const clearForm = () => {
   notes.value = "";
 };
 </script>
+
+<!-- No <style scoped> block. All styles from global.css -->
