@@ -1,7 +1,7 @@
 <template>
   <div class="packages-container">
     <div class="page-header">
-      <img src="../assets/package.png" alt="packages" />
+      <img src="../assets/magnifying-glass.png" alt="packages" />
       <h1>Lost Packages</h1>
     </div>
     <p class="subtitle">View and manage package delivery status</p>

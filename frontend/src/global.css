@@ -789,7 +789,6 @@
 
 .filter-input,
 .filter-select {
-  width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--umbc-light-gray);
   border-radius: 6px;
@@ -807,7 +806,6 @@
 .filter-select:focus {
   border-color: var(--umbc-dark-gray);
   outline: none;
-  box-shadow: 0 0 0 2px --umbc-dark-gray;
 }
 
 .clear-filters-btn {
