@@ -753,15 +753,15 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-  border-bottom: 1px solid var(--umbc-light-gray);
   padding-bottom: 15px;
   margin-top: 5px;
 }
 
 .filter-header h3 {
-  font-size: 1.1em;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
   margin: 0;
+  color: var(--umbc-black);
 }
 
 .filter-header svg {
@@ -783,18 +783,20 @@
 .filter-group label {
   font-size: 0.85em;
   color: var(--umbc-black);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-weight: 500;
 }
 
 .filter-input,
 .filter-select {
   padding: 10px 12px;
-  border: 1px solid var(--umbc-light-gray);
+  border: 1px solid #f0f0f0;
+  background-color: #f0f0f0;
   border-radius: 6px;
   font-size: 0.9em;
   color: var(--umbc-black);
   padding-right: 30px;
+  transition: all 0.2s;
 }
 
 .filter-input::placeholder {
@@ -804,13 +806,14 @@
 /* Fix this to match the report form */
 .filter-input:focus,
 .filter-select:focus {
-  border-color: var(--umbc-dark-gray);
   outline: none;
+  border-color: var(--umbc-dark-gray);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
 }
 
 .clear-filters-btn {
-  background-color: #f0f0f0;
-  border: 1px solid #f0f0f0;
+  background-color: transparent;
+  border: 1px solid var(--umbc-light-gray);
   color: var(--umbc-black);
   padding: 10px 15px;
   border-radius: 6px;
@@ -821,9 +824,9 @@
 }
 
 .clear-filters-btn:hover {
-  background-color: var(--umbc-black);
-  color: white;
-  border-color: var(--umbc-black);
+  background-color: #f0f0f0;
+  color: var(--umbc-black);
+  border-color: #f0f0f0;
 }
 
 /* Package list table */
@@ -832,23 +835,25 @@
 }
 
 .package-list-header {
-  padding: 20px;
-  border-bottom: 1px solid var(--umbc-light-gray);
+  padding: 30px;
 }
 
 .package-list-header h3 {
-  font-size: 1.1em;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
   margin: 0;
 }
 
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .packages-table {
-  width: 100%;
+  width: 95%;
   border-collapse: collapse;
   font-size: 0.9em;
   text-align: left;
@@ -856,14 +861,14 @@
 
 .packages-table th,
 .packages-table td {
-  padding: 15px 20px;
-  border-bottom: 1px solid var(--umbc-light-gray);
+  padding: 5px 10px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .packages-table th {
   background-color: white;
   font-weight: 500;
-  color: var(--umbc-dark-gray);
+  color: var(--umbc-black);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -877,17 +882,20 @@
   background-color: #f5f5f5;
 }
 
+.packages-table tbody tr td {
+  color: #4f4f4f;
+}
+
 /* Status Badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 20px; /* Pill shape */
   font-weight: 600;
-  font-size: 0.8em;
+  font-size: 0.8rem;
   text-transform: capitalize;
-  min-width: 80px; /* Ensure consistent width */
   text-align: center;
 }
 
