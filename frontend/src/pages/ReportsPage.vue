@@ -193,40 +193,27 @@ const reportFormSubmit = async () => {
 
   // package object with the current package form data
   const packageData = {
-    tracking_num: trackingNumber.value.trim(),
-    recipient_name: recipientName.value.trim(),
-    building: buildingInfo.value,
-    room_num: roomNum.value.trim(),
-    carrier: carrier.value || null,
-    date: dateFound.value,
-    notes: notes.value.trim() || null,
-  };
-
-  const reportData = {
-    worker_id: "Not Assigned",
-    completed_status: "Not Delivered",
-    tracking_num: packageData.tracking_num,
+    p_tracking_num: trackingNumber.value.trim(),
+    p_recipient_name: recipientName.value.trim(),
+    p_building: buildingInfo.value,
+    p_room_num: roomNum.value.trim(),
+    p_carrier: carrier.value || null,
+    p_date: dateFound.value,
+    p_notes: notes.value.trim() || null,
   };
 
   try {
     // Insert data into Supabase
-    const { data: packageInfo, error: packageError } = await supabase
-      .from("lost_package")
-      .insert([packageData])
-      .select(); // returns the new row(s) from the DB
+    const { data, error } = await supabase.rpc(
+      "submit_package_report",
+      packageData,
+    );
 
-    if (packageError) {
-      throw packageError;
-    }
-    const { data: reportInfo, error: reportError } = await supabase
-      .from("report")
-      .insert([reportData]);
-
-    if (reportError) {
-      throw reportError;
+    if (error) {
+      throw error;
     }
 
-    console.log("Package inserted successfully:", data);
+    console.log("Package and report inserted successfully:", data);
     submitSuccess.value = true;
 
     // Clear form after successful Submission
