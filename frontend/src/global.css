@@ -54,7 +54,7 @@
   color: var(--umbc-black);
   text-decoration: none;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   transition: all 0.2s ease;
   margin-right: 10px;
   font-size: 16px;
@@ -292,7 +292,7 @@ form-group input:-webkit-autofill,
   color: #155724;
   border: 1px solid #c3e6cb;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 1rem;
   text-align: center;
   font-weight: 500;
@@ -353,7 +353,7 @@ form-group input:-webkit-autofill,
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -411,7 +411,7 @@ form-group input:-webkit-autofill,
 @media (min-width: 640px) {
   /* sm */
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 
@@ -434,7 +434,7 @@ form-group input:-webkit-autofill,
 .action-card {
   background-color: white;
   border: 1px solid var(--umbc-light-gray);
-  border-radius: 0.75rem;
+  border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -503,7 +503,7 @@ form-group input:-webkit-autofill,
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  border-radius: 0.5rem;
+  border-radius: 12px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -884,7 +884,7 @@ form-group input:-webkit-autofill,
   padding: 10px 12px;
   border: 1px solid #f0f0f0;
   background-color: #f0f0f0;
-  border-radius: 6px;
+  border-radius: 12px;
   font-size: 0.9em;
   color: var(--umbc-black);
   padding-right: 30px;
@@ -897,7 +897,9 @@ form-group input:-webkit-autofill,
 
 /* Fix this to match the report form */
 .filter-input:focus,
-.filter-select:focus {
+.filter-select:focus,
+.filter-input:hover,
+.filter-select:hover {
   outline: none;
   border-color: var(--umbc-dark-gray);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
@@ -908,7 +910,7 @@ form-group input:-webkit-autofill,
   border: 1px solid var(--umbc-light-gray);
   color: var(--umbc-black);
   padding: 10px 15px;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 500;
@@ -1012,7 +1014,7 @@ form-group input:-webkit-autofill,
   background-color: #f8d7da;
   border: 1px solid var(--umbc-red);
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 12px;
   margin-bottom: 20px;
 }
 
@@ -1021,7 +1023,7 @@ form-group input:-webkit-autofill,
   background-color: #e7f3ff;
   border: 1px solid var(--umbc-aok-teal);
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 12px;
   margin-bottom: 20px;
 }
 
