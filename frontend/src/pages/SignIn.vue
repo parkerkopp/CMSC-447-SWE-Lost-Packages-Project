@@ -8,7 +8,7 @@
     </div>
 
     <!-- The @submit.prevent calls our handleSignIn function -->
-    <form @submit.prevent="handleSignIn" class="auth-form">
+    <form @submit.prevent="handleSignIn" class="auth-form" novalidate>
       <div class="form-group">
         <label for="email">Email Address *</label>
         <input
@@ -68,13 +68,20 @@ const errorMessage = ref("");
  * Handles the user sign-in process.
  */
 const handleSignIn = async () => {
+  isSubmitting.value = true;
+  errorMessage.value = "";
+
   if (!email.value || !password.value) {
     errorMessage.value = "Please fill in all fields";
+    isSubmitting.value = false;
     return;
   }
 
-  isSubmitting.value = true;
-  errorMessage.value = "";
+  if (!email.value.endsWith("@umbc.edu")) {
+    errorMessage.value = "Please enter valid UMBC email (...@umbc.edu)";
+    isSubmitting.value = false;
+    return;
+  }
 
   try {
     // This signs the user in against the 'auth.users' table
