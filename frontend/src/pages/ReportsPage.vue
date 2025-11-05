@@ -8,12 +8,16 @@
       Enter package information for tracking and delivery management
     </p>
 
-    <!-- NEW: Success/Error Messages -->
     <div v-if="submitSuccess" class="success-message">
-      Package reported successfully!
+      Package reported successfully!    
     </div>
-    <div v-if="submitError" class="error-message">
-      {{ submitError }}
+
+    <div v-if="submitError" class="modal-overlay" @click.self="clearError">
+      <div class="modal-content">
+        <h2 class="modal-error-title">Submission Error</h2>
+        <p class="modal-error-message">{{ submitError }}</p>
+        <button @click="clearError" class="modal-close-btn">Close</button>
+      </div>
     </div>
 
     <div class="reports-form-container">
@@ -26,6 +30,7 @@
             id="tracking-num"
             v-model="trackingNumber"
             maxlength="22"
+            minlength="18"
             required
             placeholder="Enter tracking number"
           />
@@ -102,8 +107,12 @@
         </div>
 
         <div class="button-group full-width">
-          <button type="submit" class="submit-btn" :disabled="!isFormValid || isSubmitting">
-             {{ isSubmitting ? "Submitting..." : "Submit Package Info" }}
+          <button
+            type="submit"
+            class="submit-btn"
+            :disabled="!isFormValid || isSubmitting"
+          >
+            {{ isSubmitting ? "Submitting..." : "Submit Package Info" }}
           </button>
           <button type="button" class="clear-btn" @click="clearForm">
             Clear Form
@@ -180,6 +189,53 @@ const isFormValid = computed(() => {
   );
 });
 
+const getErrorMessage = (error) => {
+  if (!error || !error.message) {
+    return "An unknown error occurred. Please try again.";
+  }
+
+  console.error("Raw Supabase Error:", error); // Logs the original error to the console for debugging
+
+  // Duplicate tracking_num
+  if (error.code === "23505") {
+    if (error.message && error.message.includes("package_tracking_num_key")) {
+      return "This tracking number has already been reported. Please check the number.";
+    }
+    return "A database conflict occurred. Please check your inputs.";
+  }
+
+  const message = error.message ? error.message.toLowerCase() : "";
+  console.error("Raw Supbase Error:", message);
+
+  // This check remains as a backup
+  if (
+    message.includes("duplicate key value") &&
+    message.includes("package_tracking_num_key")
+  ) {
+    return "This tracking number has already been reported. Please check the number.";
+  }
+
+  // Network error
+  if (
+    message.includes("failed to fetch") ||
+    message.includes("network error")
+  ) {
+    return "Could not connect to the server. Please check your internet connection.";
+  }
+
+  // RLS (Row Level Security) violation
+  if (message.includes("violates row-level security policy")) {
+    return "You do not have permission to submit this report.";
+  }
+
+  // Fallback for any other error
+  return "An unexpected error occurred. Please try again later.";
+};
+
+const clearError = () => {
+  submitError.value = null;
+};
+
 const reportFormSubmit = async () => {
   if (!isFormValid.value) {
     submitError.value = "Please fill in all required fields.";
@@ -210,7 +266,8 @@ const reportFormSubmit = async () => {
     );
 
     if (error) {
-      throw error;
+      submitError.value = getErrorMessage(error);
+      return;
     }
 
     console.log("Package and report inserted successfully:", data);
@@ -224,8 +281,7 @@ const reportFormSubmit = async () => {
       submitSuccess.value = false;
     }, 3000);
   } catch (error) {
-    console.error("Error submitting package:", error.message);
-    submitError.value = `Error submitting report: ${error.message}`;
+    submitError.value = getErrorMessage(error);
   } finally {
     isSubmitting.value = false;
   }

@@ -104,7 +104,7 @@
           <table class="packages-table">
             <thead>
               <tr>
-                <th>Tracking #</th>
+                <th>Tracking Number</th>
                 <th>Recipient</th>
                 <th>Building</th>
                 <th>Room</th>
@@ -123,10 +123,23 @@
                 <td>{{ item.date }}</td>
                 <td>{{ item.carrier }}</td>
                 <td>
-                  <span
-                    :class="['status-badge', getStatusClass(item.status)]"
-                    >{{ item.status }}</span
+                  <select
+                    :value="item.status"
+                    @change="updatePackageStatus(item, $event)"
+                    :class="[
+                      'status-badge',
+                      'status-select',
+                      getStatusClass(item.status),
+                    ]"
                   >
+                    <option
+                      v-for="option in statusOptions"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
                 </td>
                 <td>{{ item.notes }}</td>
               </tr>
@@ -145,6 +158,8 @@ import { supabase } from "../composables/supabase";
 const packages = ref([]);
 const loading = ref(false);
 const error = ref(null);
+
+const statusOptions = ref(["Pending", "Delivered", "Lost"]);
 
 const filters = ref({
   trackingNum: "",
@@ -178,11 +193,7 @@ const uniqueBuildings = computed(() => {
 });
 
 const uniqueStatuses = computed(() => {
-  // Assuming 'status' is a field in your package data, e.g., 'Pending', 'Delivered', 'Lost'
-  const statuses = new Set(
-    packages.value.map((pkg) => pkg.status).filter(Boolean),
-  );
-  return Array.from(statuses);
+  return statusOptions.value;
 });
 
 // Helper to get status class for styling
@@ -230,6 +241,30 @@ const filteredPackages = computed(() => {
     );
   });
 });
+
+const updatePackageStatus = async (pkg, event) => {
+  const newStatus = event.target.value;
+  const oldStatus = pkg.status; // Store old status for revert on failure
+
+  pkg.status = newStatus;
+
+  try {
+    const { error } = await supabase
+      .from("lost_package")
+      .update({ status: newStatus })
+      .eq("id", pkg.id);
+
+    if (error) {
+      throw error;
+    }
+    console.log(`Package ${pkg.id} status updated to ${newStatus}`);
+  } catch (error) {
+    console.error("Error updating status:", error.message);
+    pkg.status = oldStatus;
+
+    alert(`Failed to update status for ${pkg.tracking_num}. Please try again.`);
+  }
+};
 
 onMounted(async () => {
   try {
