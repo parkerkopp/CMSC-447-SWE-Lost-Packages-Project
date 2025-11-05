@@ -159,7 +159,7 @@ const packages = ref([]);
 const loading = ref(false);
 const error = ref(null);
 
-const statusOptions = ref(["Pending", "Delivered", "Lost"]);
+const statusOptions = ref(["Pending", "Delivered", "Not Delivered"]);
 
 const filters = ref({
   trackingNum: "",
@@ -203,8 +203,8 @@ const getStatusClass = (status) => {
       return "status-pending";
     case "delivered":
       return "status-delivered";
-    case "lost":
-      return "status-lost";
+    case "not delivered":
+      return "status-not-delivered";
     default:
       return "";
   }

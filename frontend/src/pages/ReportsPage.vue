@@ -30,7 +30,6 @@
             id="tracking-num"
             v-model="trackingNumber"
             maxlength="22"
-            minlength="18"
             required
             placeholder="Enter tracking number"
           />

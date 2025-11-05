@@ -9,7 +9,11 @@
   --umbc-dark-gray: #636466;
 
   --background-color: #f4f4f9;
+  --box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
+
   --container-background: #ffffff;
+  --border-color: #e5e7eb;
 }
 
 * {
@@ -93,7 +97,7 @@
   display: block;
   height: 1px;
   width: 100%;
-  background-color: var(--umbc-light-gray);
+  background-color: var(--border-color);
   margin: 0;
 }
 
@@ -132,9 +136,12 @@
 
 .reports-form-container {
   background: white;
-  border: 1px solid var(--umbc-light-gray);
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 2rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.07),
+    0 2px 4px -2px rgba(0, 0, 0, 0.07);
 }
 
 .form-section-title {
@@ -184,7 +191,7 @@
 .form-group select:hover,
 .form-group textarea:hover {
   outline: none;
-  border-color: var(--umbc-dark-gray);
+  border-color: var(--border-color);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -433,11 +440,12 @@ form-group input:-webkit-autofill,
 .stat-card,
 .action-card {
   background-color: white;
-  border: 1px solid var(--umbc-light-gray);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--box-shadow);
 }
 
 /* Stat card specific */
@@ -588,7 +596,8 @@ form-group input:-webkit-autofill,
   background-color: white;
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid var(--umbc-light-gray);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--box-shadow);
   flex-grow: 1;
 }
 
@@ -832,7 +841,8 @@ form-group input:-webkit-autofill,
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 25px;
-  border: 1px solid var(--umbc-light-gray);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--box-shadow);
 }
 
 /* Filter section */
