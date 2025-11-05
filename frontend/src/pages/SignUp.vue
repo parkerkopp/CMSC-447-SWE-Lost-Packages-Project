@@ -7,7 +7,7 @@
       <p class="auth-subtitle">Link your employee ID to create a secure login.</p>
     </div>
 
-    <form @submit.prevent="handleSignUp" class="auth-form">
+    <form @submit.prevent="handleSignUp" class="auth-form" novalidate>
       <div class="form-group">
         <label for="first_name">First Name *</label>
         <input
@@ -37,7 +37,7 @@
           id="phone"
           v-model="phone"
           required
-          placeholder="Enter work phone (XXX-YYY-ZZZZ)"
+          placeholder="Enter work phone (XXX-XXX-XXXX)"
         />
       </div>
 
@@ -103,40 +103,56 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// fields ref
+const firstName = ref("");
+const lastName = ref("");
+const phone = ref("");
 const email = ref("");
-const password = ref("");
 const workerId = ref("");
+const password = ref("");
+
+// state refs
 const isSubmitting = ref(false);
-const errorMessage = ref("");
+const errorMessage = ref(null);
 
-/**
- * Handles the user sign-up process.
- */
+// Some regex patterns for validation
+const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+const umbcIdRegex = /^[A-Za-z]{2}\d{5}$/;
+
+
+// Handles the user sign-up process.
 const handleSignUp = async () => {
-  if (!email.value || !password.value || !workerId.value) {
-    errorMessage.value = "Please fill in all fields";
-    return;
-  }
-  
-  // We check if a worker profile already exists for this ID.
-  const { data: worker, error: workerError } = await supabase
-    .from('worker')
-    .select('worker_id')
-    .eq('worker_id', workerId.value.trim())
-    .eq('worker_email', email.value.trim())
-    .single();
-
-  if (workerError || !worker) {
-    errorMessage.value = "No worker profile found matching that ID and Email. Please contact your administrator.";
-    return;
-  }
-
   isSubmitting.value = true;
-  errorMessage.value = "";
+  errorMessage.value = null;
+
+  const validationErrors = [];
+
+  // no specific format validation, just making sure they're not empty
+  if (!firstName.value) validationErrors.push("First name is required.");
+  if (!lastName.value) validationErrors.push("Last name is required.");
+  if (!password.value) validationErrors.push("Password is required.");
+
+  // Now for the format-specific validation
+  if (!phone.value) validationErrors.push("Phone number is required.");
+  else if (!phoneRegex.test(phone.value)) validationErrors.push("Please enter valid phone number format (XXX-XXX-XXXX)");
+
+  if (!email.value) validationErrors.push("UMBC email is required.");
+  else if (!email.value.endsWith("@umbc.edu")) validationErrors.push("Please enter valid UMBC email (...@umbc.edu)");
+
+  if (!workerId.value) validationErrors.push("UMBC ID is required.");
+  else if (!umbcIdRegex.test(workerId.value)) validationErrors.push("Please enter valid UMBC ID (AB12345)");
+
+  if (validationErrors.length > 0) {
+    errorMessage.value = validationErrors.join("\n");
+    isSubmitting.value = false;
+    return;
+  }
+
+  let authUser = null; // to hold user in handleSignUp
 
   try {
     // Create the user in the 'auth.users' table
-    const { data, error } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
       options: {
@@ -147,10 +163,25 @@ const handleSignUp = async () => {
       }
     });
 
-    if (error) throw error;
+    if (authError) throw error;
+    authUser = authData.user;
+    
+    // Create the worker profile
+    const { error: profileError } = await supabase
+      .from('worker')
+      .insert([
+        {
+          worker_id: workerId.value.trim(),
+          worker_first_name: firstName.value.trim(),
+          worker_last_name: lastName.value.trim(),
+          worker_phone: phone.value.trim(),
+          worker_email: email.value.trim()
+        }
+      ]);
+    
+    if (profileError) throw profileError;
 
-    // If sign-up is successful, redirect to the home page.
-    alert('Sign up successful! You will be redirected to the home page.');
+    alert("Account created successfully! You will be redirected to the home page.");
     router.push("/");
 
   } catch (error) {
@@ -247,6 +278,9 @@ const handleSignUp = async () => {
   color: #991b1b;
   background-color: #fef2f2;
   border: 1px solid #fca5a5;
+  white-space: pre-line;
+  text-align: center;
+  padding: 16px;
 }
 .success-message {
   color: #065f46;
