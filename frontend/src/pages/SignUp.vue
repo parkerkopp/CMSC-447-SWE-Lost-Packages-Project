@@ -17,6 +17,7 @@
           required
           placeholder="Enter your first name"
         />
+        <span v-if="errorMessage">{{ errorMessage }}</span>
       </div>
 
       <div class="form-group">
@@ -71,6 +72,7 @@
           v-model="password"
           required
           placeholder="Create a new password"
+          minlength="6"
         />
       </div>
 
@@ -111,9 +113,15 @@ const email = ref("");
 const workerId = ref("");
 const password = ref("");
 
-// state refs
+// state refs 
+// MAKE EACH ERROR MESSAGE POP UP UNDER TEXT BOX - CHECK FIRST_NAME HTML BLOCK
 const isSubmitting = ref(false);
-const errorMessage = ref(null);
+const firstNameError = ref(null);
+const lastNameError = ref(null);
+const phoneError = ref(null);
+const emailError = ref(null);
+const workerIdError = ref(null);
+const passwordError = ref(null);
 
 // Some regex patterns for validation
 const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
@@ -125,6 +133,7 @@ const handleSignUp = async () => {
   isSubmitting.value = true;
   errorMessage.value = null;
 
+  /*
   const validationErrors = [];
 
   // no specific format validation, just making sure they're not empty
@@ -147,6 +156,8 @@ const handleSignUp = async () => {
     isSubmitting.value = false;
     return;
   }
+
+  */
 
   let authUser = null; // to hold user in handleSignUp
 
@@ -276,8 +287,6 @@ const handleSignUp = async () => {
 
 .error-message {
   color: #991b1b;
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
   white-space: pre-line;
   text-align: center;
   padding: 16px;
