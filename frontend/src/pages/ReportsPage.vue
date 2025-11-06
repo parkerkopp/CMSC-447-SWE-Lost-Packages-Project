@@ -30,6 +30,7 @@
             id="tracking-num"
             v-model="trackingNumber"
             maxlength="22"
+            minlength="8"
             required
             placeholder="Enter tracking number"
           />
@@ -241,6 +242,17 @@ const reportFormSubmit = async () => {
     return;
   }
 
+  if (!validateRecipiantName(recipientName.value)) {
+    submitError.value =
+      "Please enter a valid recipient name. Names cannot be just single letters separated by spaces (e.g., 'J o h n').";
+    return;
+  }
+
+  const normalizeRecipientName = recipientName.value
+    .trim()
+    .split(/\s+/)
+    .join(" ");
+
   // Reset messages
   submitSuccess.value = false;
   submitError.value = null;
@@ -249,7 +261,7 @@ const reportFormSubmit = async () => {
   // package object with the current package form data
   const packageData = {
     p_tracking_num: trackingNumber.value.trim(),
-    p_recipient_name: recipientName.value.trim(),
+    p_recipient_name: normalizeRecipientName,
     p_building: buildingInfo.value,
     p_room_num: roomNum.value.trim(),
     p_carrier: carrier.value || null,
@@ -286,9 +298,17 @@ const reportFormSubmit = async () => {
   }
 };
 
-const validateTrackingNum = (trackingNum) => {};
-const validateRecipiant = (recipiant) => {};
-const carrierAPICheck = (carrier) => {};
+const validateRecipiantName = (name) => {
+  const trimmedName = name.trim();
+
+  const words = trimmedName.split(/\s+/);
+
+  if (words.length <= 1) return true;
+
+  const allAreSingleLetters = words.every((word) => word.length === 1);
+
+  return !allAreSingleLetters;
+};
 
 const clearForm = () => {
   trackingNumber.value = "";
