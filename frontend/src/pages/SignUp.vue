@@ -19,7 +19,7 @@
           required
           placeholder="Enter your first name"
         />
-        <span v-if="errorMessage">{{ errorMessage }}</span>
+        <span v-if="firstNameError">{{ firstNameError }}</span>
       </div>
 
       <div class="form-group">
@@ -31,17 +31,19 @@
           required
           placeholder="Enter your last name"
         />
+        <span v-if="lastNameError">{{ lastNameError }}</span>
       </div>
 
       <div class="form-group">
         <label for="phone">Phone Number *</label>
         <input
-          type="phone"
+          type="tel"
           id="phone"
           v-model="phone"
           required
           placeholder="Enter work phone (XXX-XXX-XXXX)"
         />
+        <span v-if="phoneError">{{ phoneError }}</span>
       </div>
 
       <div class="form-group">
@@ -53,6 +55,7 @@
           required
           placeholder="Enter your work email"
         />
+        <span v-if="emailError">{{ emailError }}</span>
       </div>
 
       <div class="form-group">
@@ -64,6 +67,7 @@
           required
           placeholder="Enter your Employee ID (e.g., DD01345)"
         />
+        <span v-if="workerIdError">{{ workerIdError }}</span>
       </div>
 
       <div class="form-group">
@@ -76,10 +80,11 @@
           placeholder="Create a new password"
           minlength="6"
         />
+        <span v-if="passwordError">{{ passwordError }}</span>
       </div>
 
       <div class="button-group full-width">
-        <button class="submit-btn" type="submit" :disabled="isSubmitting">
+        <button class="submit-btn" type="submit" :disabled="!isFormValid || isSubmitting">
           {{ isSubmitting ? "Creating Account..." : "Sign Up" }}
         </button>
       </div>
@@ -91,16 +96,11 @@
         </p>
       </div>
     </form>
-
-    <!-- Shows an error message if login fails -->
-    <div class="error-message" v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { supabase } from "../composables/supabase";
 import { useRouter } from "vue-router";
 
@@ -115,7 +115,6 @@ const workerId = ref("");
 const password = ref("");
 
 // state refs 
-// MAKE EACH ERROR MESSAGE POP UP UNDER TEXT BOX - CHECK FIRST_NAME HTML BLOCK
 const isSubmitting = ref(false);
 const firstNameError = ref(null);
 const lastNameError = ref(null);
@@ -123,15 +122,56 @@ const phoneError = ref(null);
 const emailError = ref(null);
 const workerIdError = ref(null);
 const passwordError = ref(null);
+const errorMessage = ref(null); // for catch block
 
 // Some regex patterns for validation
+// phoneRegex and umbcIdRegex follow "allow" logic
+// nameRegex follows "deny" logic
+// this impacts the tests for validation below
 const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 const umbcIdRegex = /^[A-Za-z]{2}\d{5}$/;
+const nameRegex = /[0-9!@#$%^&*()_+=<>?/\\|~\[\]{}]/;
+
+// Form validation
+const isFormValid = computed(() => {
+  return (
+    firstName.value.trim() !== "" &&
+    lastName.value.trim() !== "" &&
+    phone.value.trim() !== "" &&
+    email.value.trim() !== "" &&
+    workerId.value.trim() !== "" &&
+    password.value.trim() !== ""
+  );
+});
 
 // Handles the user sign-up process.
 const handleSignUp = async () => {
   isSubmitting.value = true;
+  firstNameError.value = null;
+  lastNameError.value = null;
+  phoneError.value = null;
+  emailError.value = null;
+  workerIdError.value = null;
+  passwordError.value = null;
   errorMessage.value = null;
+
+  if (nameRegex.test(firstName.value)) 
+    firstNameError.value = "Name cannot contain numbers or special characters.";
+
+  if (nameRegex.test(lastName.value)) 
+    lastNameError.value = "Name cannot contain numbers or special characters.";
+  
+    if (password.value.length < 6) passwordError.value = "Password must be at least 6 characters.";
+
+  if (!phoneRegex.test(phone.value))
+    phoneError.value = "Please enter valid phone number in format (XXX-XXX-XXXX)";
+
+  if (!email.value.endsWith("@umbc.edu"))
+    emailError.value = "Please enter valid UMBC email (...@umbc.edu)";
+
+  if (!umbcIdRegex.test(workerId.value))
+    workerIdError.value = "Please enter valid UMBC ID (AB12345)";
+
 
   /*
   const validationErrors = [];
@@ -174,18 +214,18 @@ const handleSignUp = async () => {
       options: {
         // Pass the worker_id into the user's metadata
         data: {
-          worker_id: workerId.value.trim(),
+          worker_id: workerId.value.trim().toUpperCase(),
         },
       },
     });
 
-    if (authError) throw error;
+    if (authError) throw authError;
     authUser = authData.user;
 
     // Create the worker profile
     const { error: profileError } = await supabase.from("worker").insert([
       {
-        worker_id: workerId.value.trim(),
+        worker_id: workerId.value.trim().toUpperCase(),
         worker_first_name: firstName.value.trim(),
         worker_last_name: lastName.value.trim(),
         worker_phone: phone.value.trim(),
@@ -299,5 +339,16 @@ const handleSignUp = async () => {
   color: #065f46;
   background-color: #d1fae5;
   border: 1px solid #6ee7b7;
+}
+
+.form-group span::before {
+  content: "⚠ ";
+}
+
+.form-group span {
+  color: #991b1b;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
 }
 </style>
