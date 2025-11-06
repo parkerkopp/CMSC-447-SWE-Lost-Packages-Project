@@ -25,7 +25,7 @@
         <!-- Left Column -->
         <div class="profile-column-left">
           <div class="profile-card">
-            <!-- Avatar, Name, and Position -->
+            <!-- Avatar, and Name  -->
             <div class="profile-summary">
               <div class="profile-avatar">{{ initials }}</div>
               <h2 class="profile-name">
@@ -124,9 +124,9 @@
                       'status-badge',
                       report.completed_status === 'Completed'
                         ? 'status-completed'
-                        : report.completed_status === 'Pending' 
-                        ? 'status-pending'
-                        : 'status-incomplete',
+                        : report.completed_status === 'Pending'
+                          ? 'status-pending'
+                          : 'status-incomplete',
                     ]"
                   >
                     {{ report.completed_status }}
@@ -229,13 +229,15 @@ async function fetchProfileData(workerId) {
   }
 }
 
-
 async function getUserSession() {
   loading.value = true;
   error.value = null;
 
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError) {
       throw userError;
@@ -243,24 +245,25 @@ async function getUserSession() {
 
     if (!user) {
       error.value = "You are not logged in.";
-      router.push('/login'); 
+      router.push("/login");
       return;
     }
 
-    const userWorkerId = user.user_metadata?.worker_id; 
+    const userWorkerId = user.user_metadata?.worker_id;
 
     if (!userWorkerId) {
       throw new Error("Your user account is not linked to a worker profile.");
     }
 
     await fetchProfileData(userWorkerId);
-
   } catch (err) {
     console.error("Auth error:", err.message);
     error.value = err.message;
     loading.value = false;
-    if (err.message !== "Your user account is not linked to a worker profile.") {
-      router.push('/login');
+    if (
+      err.message !== "Your user account is not linked to a worker profile."
+    ) {
+      router.push("/login");
     }
   }
 }
