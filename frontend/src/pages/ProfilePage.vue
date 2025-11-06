@@ -25,14 +25,13 @@
         <!-- Left Column -->
         <div class="profile-column-left">
           <div class="profile-card">
-            <!-- Avatar, Name, and Position -->
+            <!-- Avatar, and Name  -->
             <div class="profile-summary">
               <div class="profile-avatar">{{ initials }}</div>
               <h2 class="profile-name">
                 {{ employeeProfile.worker_first_name }}
                 {{ employeeProfile.worker_last_name }}
               </h2>
-              <p class="profile-position">{{ employeeProfile.position }}</p>
             </div>
 
             <!-- Contact Details List -->
@@ -86,10 +85,6 @@
                 <p class="detail-value">Mail Services</p>
               </div>
               <div class="detail-item">
-                <label class="detail-label">Position</label>
-                <p class="detail-value">{{ employeeProfile.position }}</p>
-              </div>
-              <div class="detail-item">
                 <!-- NOTE: This field is from Figma but NOT in your 'worker' table schema -->
                 <label class="detail-label">Start Date</label>
                 <p class="detail-value">2022-03-15</p>
@@ -129,9 +124,9 @@
                       'status-badge',
                       report.completed_status === 'Completed'
                         ? 'status-completed'
-                        : report.completed_status === 'Pending' 
-                        ? 'status-pending'
-                        : 'status-incomplete',
+                        : report.completed_status === 'Pending'
+                          ? 'status-pending'
+                          : 'status-incomplete',
                     ]"
                   >
                     {{ report.completed_status }}
@@ -234,13 +229,15 @@ async function fetchProfileData(workerId) {
   }
 }
 
-
 async function getUserSession() {
   loading.value = true;
   error.value = null;
 
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError) {
       throw userError;
@@ -248,24 +245,25 @@ async function getUserSession() {
 
     if (!user) {
       error.value = "You are not logged in.";
-      router.push('/login'); 
+      router.push("/login");
       return;
     }
 
-    const userWorkerId = user.user_metadata?.worker_id; 
+    const userWorkerId = user.user_metadata?.worker_id;
 
     if (!userWorkerId) {
       throw new Error("Your user account is not linked to a worker profile.");
     }
 
     await fetchProfileData(userWorkerId);
-
   } catch (err) {
     console.error("Auth error:", err.message);
     error.value = err.message;
     loading.value = false;
-    if (err.message !== "Your user account is not linked to a worker profile.") {
-      router.push('/login');
+    if (
+      err.message !== "Your user account is not linked to a worker profile."
+    ) {
+      router.push("/login");
     }
   }
 }

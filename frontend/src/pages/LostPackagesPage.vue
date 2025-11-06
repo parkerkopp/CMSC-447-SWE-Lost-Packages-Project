@@ -5,8 +5,8 @@
       <h1>Lost Packages</h1>
     </div>
     <p class="subtitle">View and manage package delivery status</p>
-    <div v-if="error" class="error">Error: {{ error }}</div>
-    <div v-if="loading" class="loading">Loading database...</div>
+    <div v-if="error" class="error-state">Error: {{ error }}</div>
+    <div v-if="loading" class="loading-state">Loading package data...</div>
     <div v-else-if="!error">
       <!-- Filter Section -->
       <div class="card filter-card">
