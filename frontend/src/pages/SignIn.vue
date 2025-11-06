@@ -97,10 +97,10 @@ const handleSignIn = async () => {
 
     // If sign-in is successful, 'data.user' will exist
     router.push("/");
-
   } catch (error) {
     console.error("Sign in error:", error);
-    errorMessage.value = error.message || "Failed to sign in. Please check your credentials.";
+    errorMessage.value =
+      error.message || "Failed to sign in. Please check your credentials.";
   } finally {
     isSubmitting.value = false;
   }
@@ -108,7 +108,7 @@ const handleSignIn = async () => {
 </script>
 
 <style scoped>
-  /* Sign In Page Styles */
+/* Sign In Page Styles */
 .auth-container {
   display: flex;
   flex-direction: column;
@@ -126,7 +126,7 @@ const handleSignIn = async () => {
   font-size: 28px;
   font-weight: 700;
   color: #111827;
-  margin: 0;
+  margin: auto;
 }
 
 .auth-subtitle {
@@ -142,14 +142,17 @@ const handleSignIn = async () => {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 24px 32px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.07),
+    0 2px 4px -2px rgba(0, 0, 0, 0.07);
 }
 
 .auth-form .form-group {
   margin-bottom: 20px;
 }
 
-.auth-form .button-group { /* Use button-group for consistency */
+.auth-form .button-group {
+  /* Use button-group for consistency */
   margin-top: 24px;
 }
 
@@ -173,7 +176,8 @@ const handleSignIn = async () => {
 }
 
 /* Generic Error/Success Messages */
-.error-message, .success-message {
+.error-message,
+.success-message {
   width: 100%;
   max-width: 1200px; /* Match reports container */
   margin: 0 auto 1.5rem auto;
@@ -198,3 +202,4 @@ const handleSignIn = async () => {
   border: 1px solid #6ee7b7;
 }
 </style>
+

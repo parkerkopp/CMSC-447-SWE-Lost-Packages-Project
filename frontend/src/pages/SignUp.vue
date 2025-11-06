@@ -4,7 +4,9 @@
       <div class="title-container">
         <h1 class="auth-title">Create Your Account</h1>
       </div>
-      <p class="auth-subtitle">Link your employee ID to create a secure login.</p>
+      <p class="auth-subtitle">
+        Link your employee ID to create a secure login.
+      </p>
     </div>
 
     <form @submit.prevent="handleSignUp" class="auth-form" novalidate>
@@ -27,13 +29,13 @@
           id="last_name"
           v-model="lastName"
           required
-          placeholder="Enter your last name" 
+          placeholder="Enter your last name"
         />
       </div>
 
       <div class="form-group">
         <label for="phone">Phone Number *</label>
-        <input 
+        <input
           type="phone"
           id="phone"
           v-model="phone"
@@ -76,7 +78,7 @@
         />
       </div>
 
-      <div class="button-group">
+      <div class="button-group full-width">
         <button class="submit-btn" type="submit" :disabled="isSubmitting">
           {{ isSubmitting ? "Creating Account..." : "Sign Up" }}
         </button>
@@ -88,7 +90,6 @@
           <router-link to="/signin" class="auth-link">Sign In</router-link>
         </p>
       </div>
-
     </form>
 
     <!-- Shows an error message if login fails -->
@@ -127,7 +128,6 @@ const passwordError = ref(null);
 const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 const umbcIdRegex = /^[A-Za-z]{2}\d{5}$/;
 
-
 // Handles the user sign-up process.
 const handleSignUp = async () => {
   isSubmitting.value = true;
@@ -143,13 +143,18 @@ const handleSignUp = async () => {
 
   // Now for the format-specific validation
   if (!phone.value) validationErrors.push("Phone number is required.");
-  else if (!phoneRegex.test(phone.value)) validationErrors.push("Please enter valid phone number format (XXX-XXX-XXXX)");
+  else if (!phoneRegex.test(phone.value))
+    validationErrors.push(
+      "Please enter valid phone number format (XXX-XXX-XXXX)",
+    );
 
   if (!email.value) validationErrors.push("UMBC email is required.");
-  else if (!email.value.endsWith("@umbc.edu")) validationErrors.push("Please enter valid UMBC email (...@umbc.edu)");
+  else if (!email.value.endsWith("@umbc.edu"))
+    validationErrors.push("Please enter valid UMBC email (...@umbc.edu)");
 
   if (!workerId.value) validationErrors.push("UMBC ID is required.");
-  else if (!umbcIdRegex.test(workerId.value)) validationErrors.push("Please enter valid UMBC ID (AB12345)");
+  else if (!umbcIdRegex.test(workerId.value))
+    validationErrors.push("Please enter valid UMBC ID (AB12345)");
 
   if (validationErrors.length > 0) {
     errorMessage.value = validationErrors.join("\n");
@@ -169,32 +174,31 @@ const handleSignUp = async () => {
       options: {
         // Pass the worker_id into the user's metadata
         data: {
-          worker_id: workerId.value.trim()
-        }
-      }
+          worker_id: workerId.value.trim(),
+        },
+      },
     });
 
     if (authError) throw error;
     authUser = authData.user;
-    
+
     // Create the worker profile
-    const { error: profileError } = await supabase
-      .from('worker')
-      .insert([
-        {
-          worker_id: workerId.value.trim(),
-          worker_first_name: firstName.value.trim(),
-          worker_last_name: lastName.value.trim(),
-          worker_phone: phone.value.trim(),
-          worker_email: email.value.trim()
-        }
-      ]);
-    
+    const { error: profileError } = await supabase.from("worker").insert([
+      {
+        worker_id: workerId.value.trim(),
+        worker_first_name: firstName.value.trim(),
+        worker_last_name: lastName.value.trim(),
+        worker_phone: phone.value.trim(),
+        worker_email: email.value.trim(),
+      },
+    ]);
+
     if (profileError) throw profileError;
 
-    alert("Account created successfully! You will be redirected to the home page.");
+    alert(
+      "Account created successfully! You will be redirected to the home page.",
+    );
     router.push("/");
-
   } catch (error) {
     console.error("Sign up error:", error);
     errorMessage.value = error.message || "Failed to create account.";
@@ -234,28 +238,27 @@ const handleSignUp = async () => {
 .auth-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
   max-width: 600px;
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 24px 32px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.07),
+    0 2px 4px -2px rgba(0, 0, 0, 0.07);
 }
 
 .auth-form .form-group {
   margin-bottom: 20px;
 }
 
-.auth-form .button-group { /* Use button-group for consistency */
-  margin-top: 24px;
-}
-
 .auth-footer {
   text-align: center;
-  margin-top: 20px;
   font-size: 14px;
   color: #6b7280;
+  grid-column: 1 / -1;
 }
 
 .auth-link {
@@ -271,7 +274,8 @@ const handleSignUp = async () => {
 }
 
 /* Generic Error/Success Messages */
-.error-message, .success-message {
+.error-message,
+.success-message {
   width: 100%;
   max-width: 1200px; /* Match reports container */
   margin: 0 auto 1.5rem auto;
