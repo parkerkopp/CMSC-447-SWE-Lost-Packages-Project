@@ -32,7 +32,6 @@
                 {{ employeeProfile.worker_first_name }}
                 {{ employeeProfile.worker_last_name }}
               </h2>
-              <p class="profile-position">{{ employeeProfile.position }}</p>
             </div>
 
             <!-- Contact Details List -->
@@ -84,10 +83,6 @@
                 <!-- NOTE: This field is from Figma but NOT in your 'worker' table schema -->
                 <label class="detail-label">Department</label>
                 <p class="detail-value">Mail Services</p>
-              </div>
-              <div class="detail-item">
-                <label class="detail-label">Position</label>
-                <p class="detail-value">{{ employeeProfile.position }}</p>
               </div>
               <div class="detail-item">
                 <!-- NOTE: This field is from Figma but NOT in your 'worker' table schema -->
@@ -271,16 +266,5 @@ async function getUserSession() {
 }
 
 // --- Lifecycle Hooks ---
-onMounted(() => {
-  // --- TEMPORARY FIX ---
-  // We are bypassing the login check and loading a static ID
-  // to let you see the page.
-  // Replace 'DD01234' with one of your real worker IDs.
-  //fetchProfileData("DD01345");
-
-  // --- REAL FIX (use this later) ---
-  // Once you have a /login route and auth is working,
-  // comment out the line above and uncomment this one:
-  getUserSession();
-});
+onMounted(() => { getUserSession(); });
 </script>
