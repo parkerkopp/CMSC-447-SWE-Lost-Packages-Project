@@ -122,11 +122,11 @@
                   <span
                     :class="[
                       'status-badge',
-                      report.completed_status === 'Completed'
-                        ? 'status-completed'
+                      report.completed_status === 'Delivered'
+                        ? 'status-delivered'
                         : report.completed_status === 'Pending'
                           ? 'status-pending'
-                          : 'status-incomplete',
+                          : 'status-not-delivered',
                     ]"
                   >
                     {{ report.completed_status }}
@@ -269,5 +269,7 @@ async function getUserSession() {
 }
 
 // --- Lifecycle Hooks ---
-onMounted(() => { getUserSession(); });
+onMounted(() => {
+  getUserSession();
+});
 </script>
