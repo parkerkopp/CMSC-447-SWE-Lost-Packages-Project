@@ -1,9 +1,7 @@
 <template>
   <div class="auth-container">
     <div class="auth-card">
-      <div class="title-container">
-        <h1 class="auth-title">Sign In</h1>
-      </div>
+      <h1 class="auth-title">Sign In</h1>
       <p class="auth-subtitle">Enter your credentials to access your account</p>
     </div>
 
@@ -123,10 +121,10 @@ const handleSignIn = async () => {
 }
 
 .auth-title {
-  font-size: 28px;
+  font-size: 2rem;
   font-weight: 700;
   color: #111827;
-  margin: auto;
+  text-align: center;
 }
 
 .auth-subtitle {
@@ -202,4 +200,3 @@ const handleSignIn = async () => {
   border: 1px solid #6ee7b7;
 }
 </style>
-

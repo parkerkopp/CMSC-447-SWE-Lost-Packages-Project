@@ -1,9 +1,7 @@
 <template>
   <div class="auth-container">
     <div class="auth-card">
-      <div class="title-container">
-        <h1 class="auth-title">Create Your Account</h1>
-      </div>
+      <h1 class="auth-title">Create Your Account</h1>
       <p class="auth-subtitle">
         Link your employee ID to create a secure login.
       </p>
@@ -272,10 +270,11 @@ const handleSignUp = async () => {
 }
 
 .auth-title {
-  font-size: 28px;
+  font-size: 2rem;
   font-weight: 700;
   color: #111827;
   margin: 0;
+  text-align: center;
 }
 
 .auth-subtitle {
