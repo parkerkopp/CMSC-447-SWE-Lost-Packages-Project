@@ -305,6 +305,8 @@ const validateRecipiantName = (name) => {
 
   if (words.length <= 1) return true;
 
+  if (words.length >= 5) return false;
+
   const allAreSingleLetters = words.every((word) => word.length === 1);
 
   return !allAreSingleLetters;

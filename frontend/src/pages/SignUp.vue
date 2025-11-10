@@ -84,7 +84,11 @@
       </div>
 
       <div class="button-group full-width">
-        <button class="submit-btn" type="submit" :disabled="!isFormValid || isSubmitting">
+        <button
+          class="submit-btn"
+          type="submit"
+          :disabled="!isFormValid || isSubmitting"
+        >
           {{ isSubmitting ? "Creating Account..." : "Sign Up" }}
         </button>
       </div>
@@ -114,7 +118,7 @@ const email = ref("");
 const workerId = ref("");
 const password = ref("");
 
-// state refs 
+// state refs
 const isSubmitting = ref(false);
 const firstNameError = ref(null);
 const lastNameError = ref(null);
@@ -155,23 +159,24 @@ const handleSignUp = async () => {
   passwordError.value = null;
   errorMessage.value = null;
 
-  if (nameRegex.test(firstName.value)) 
+  if (nameRegex.test(firstName.value))
     firstNameError.value = "Name cannot contain numbers or special characters.";
 
-  if (nameRegex.test(lastName.value)) 
+  if (nameRegex.test(lastName.value))
     lastNameError.value = "Name cannot contain numbers or special characters.";
-  
-    if (password.value.length < 6) passwordError.value = "Password must be at least 6 characters.";
+
+  if (password.value.length < 6)
+    passwordError.value = "Password must be at least 6 characters.";
 
   if (!phoneRegex.test(phone.value))
-    phoneError.value = "Please enter valid phone number in format (XXX-XXX-XXXX)";
+    phoneError.value =
+      "Please enter valid phone number in format (XXX-XXX-XXXX)";
 
   if (!email.value.endsWith("@umbc.edu"))
     emailError.value = "Please enter valid UMBC email (...@umbc.edu)";
 
   if (!umbcIdRegex.test(workerId.value))
     workerIdError.value = "Please enter valid UMBC ID (AB12345)";
-
 
   /*
   const validationErrors = [];
@@ -219,7 +224,9 @@ const handleSignUp = async () => {
       },
     });
 
-    if (authError) throw authError;
+    if (authError) {
+      errorMessage.value = authError;
+    }
     authUser = authData.user;
 
     // Create the worker profile
@@ -233,7 +240,9 @@ const handleSignUp = async () => {
       },
     ]);
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      errorMessage.value = profileError;
+    }
 
     alert(
       "Account created successfully! You will be redirected to the home page.",
