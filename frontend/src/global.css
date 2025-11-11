@@ -1000,6 +1000,7 @@ form-group input:-webkit-autofill,
   font-size: 0.8rem;
   text-transform: capitalize;
   text-align: center;
+  cursor: pointer;
 }
 
 .status-pending {
@@ -1018,18 +1019,6 @@ form-group input:-webkit-autofill,
   background-color: #f8d7da; /* Light red */
   color: #721c24; /* Darker red text */
   border-color: #f8d7da;
-}
-
-.status-pending:hover {
-  background-color: #fff1ab;
-}
-
-.status-delivered:hover {
-  background-color: #b2edba;
-}
-
-.status-not-delivered:hover {
-  background-color: #f8b5b8;
 }
 
 .status-pending:focus,
