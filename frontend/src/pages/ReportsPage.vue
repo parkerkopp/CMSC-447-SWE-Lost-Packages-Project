@@ -166,7 +166,7 @@ const availableBuildings = ref([
   "Retriever Activies Center (RAC)",
   "Satellite Utility Plant",
   "Sherman Hall",
-  "Sonheim Hall",
+  "Sondheim Hall",
   "Student Development & Success Center (SDSC)",
   "Technology Research Center (TRC)",
   "Tech 2",
