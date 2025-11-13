@@ -133,6 +133,7 @@ const errorMessage = ref(null); // for catch block
 const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 const umbcIdRegex = /^[A-Za-z]{2}\d{5}$/;
 const nameRegex = /[0-9!@#$%^&*()_+=<>?/\\|~\[\]{}]/;
+const emailRegex = /^[A-Za-z0-9]+@umbc\.edu$/;
 
 // Form validation
 const isFormValid = computed(() => {
@@ -157,11 +158,19 @@ const handleSignUp = async () => {
   passwordError.value = null;
   errorMessage.value = null;
 
-  if (nameRegex.test(firstName.value))
-    firstNameError.value = "Name cannot contain numbers or special characters.";
+  const firstNameSpaces = (firstName.value.trim().match(/ /g) || []).length
 
-  if (nameRegex.test(lastName.value))
+  if (nameRegex.test(firstName.value.trim()))
+    firstNameError.value = "Name cannot contain numbers or special characters.";
+  else if (firstNameSpaces > 5)
+    firstNameError.value = "Name can contain at most 5 spaces.";
+
+  const lastNameSpaces = (lastName.value.trim().match(/ /g) || []).length
+
+  if (nameRegex.test(lastName.value.trim()))
     lastNameError.value = "Name cannot contain numbers or special characters.";
+  else if (lastNameSpaces > 5)
+    lastNameError.value = "Name can contain at most 5 spaces.";
 
   if (password.value.length < 6)
     passwordError.value = "Password must be at least 6 characters.";
@@ -170,7 +179,7 @@ const handleSignUp = async () => {
     phoneError.value =
       "Please enter valid phone number in format (XXX-XXX-XXXX)";
 
-  if (!email.value.endsWith("@umbc.edu"))
+  if (!emailRegex.test(email.value))
     emailError.value = "Please enter valid UMBC email (...@umbc.edu)";
 
   if (!umbcIdRegex.test(workerId.value))
@@ -207,6 +216,19 @@ const handleSignUp = async () => {
 
   */
 
+  // stops form submission in case of any error
+  if (
+    firstNameError.value ||
+    lastNameError.value ||
+    phoneError.value ||
+    emailError.value ||
+    workerIdError.value ||
+    passwordError.value
+  ) {
+    isSubmitting.value = false;
+    return;
+  }
+
   let authUser = null; // to hold user in handleSignUp
 
   try {
@@ -222,9 +244,7 @@ const handleSignUp = async () => {
       },
     });
 
-    if (authError) {
-      errorMessage.value = authError;
-    }
+    if (authError) throw authError;
     authUser = authData.user;
 
     // Create the worker profile
@@ -234,13 +254,11 @@ const handleSignUp = async () => {
         worker_first_name: firstName.value.trim(),
         worker_last_name: lastName.value.trim(),
         worker_phone: phone.value.trim(),
-        worker_email: email.value.trim(),
+        worker_email: email.value.trim().toLowerCase(),
       },
     ]);
 
-    if (profileError) {
-      errorMessage.value = profileError;
-    }
+    if (profileError) throw profileError;
 
     alert(
       "Account created successfully! You will be redirected to the home page.",

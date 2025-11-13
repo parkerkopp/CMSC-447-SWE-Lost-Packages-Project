@@ -15,14 +15,31 @@
         <router-link to="/lost-packages" class="link">Packages</router-link>
         <router-link to="/profile" class="link">Profile</router-link>
         
-        <!-- NEW: Dynamic Sign In / Sign Out Links -->
+        <!-- NEW: Updated Sign Out Link -->
         <router-link v-if="!user" to="/signin" class="link">Sign In</router-link>
-        <a v-else @click="handleSignOut" class="link" href="#">Sign Out</a>
+        <a v-else @click.prevent="showSignOutModal = true" class="link" href="#">Sign Out</a>
       </div>
     </nav>
     <span class="divider"></span>
     <!-- This is where the pages load -->
     <router-view />
+
+    <!-- NEW: Confirm Sign Out Pop Up -->
+    <div
+      v-if="showSignOutModal"
+      class="confirm-modal-overlay"
+      @click.self="cancelSignOut"
+    >
+      <div class="confirm-modal-content">
+        <h3 class="confirm-modal-title">Confirm Sign Out</h3>
+        <p class="confirm-modal-text">Are you sure you want to sign out?</p>
+        <div class="confirm-modal-buttons">
+          <button @click="cancelSignOut" class="confirm-btn-cancel">Cancel</button>
+          <button @click="handleSignOut" class="confirm-btn-confirm">Sign Out</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -34,6 +51,9 @@ import { useRouter } from 'vue-router';
 const user = ref(null);
 const router = useRouter();
 
+// NEW: Ref to control sign up pop up modal
+const showSignOutModal = ref(false);
+
 // Check the auth state when the app loads and when it changes
 onMounted(() => {
   supabase.auth.onAuthStateChange((event, session) => {
@@ -41,13 +61,17 @@ onMounted(() => {
   });
 });
 
-// Handle sign out
+// NEW: Close sign out pop up modal
+const cancelSignOut = () => { showSignOutModal.value = false; }
+
+// Handle sign out (now called from modal)
 const handleSignOut = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error('Error signing out:', error.message);
   } else {
     // On successful sign out, redirect to home
+    showSignOutModal.value = false;
     router.push('/');
   }
 };
