@@ -158,14 +158,14 @@ const handleSignUp = async () => {
   passwordError.value = null;
   errorMessage.value = null;
 
-  const firstNameSpaces = (firstName.value.trim().match(/ /g) || []).length
+  const firstNameSpaces = (firstName.value.trim().match(/ /g) || []).length;
 
   if (nameRegex.test(firstName.value.trim()))
     firstNameError.value = "Name cannot contain numbers or special characters.";
   else if (firstNameSpaces > 5)
     firstNameError.value = "Name can contain at most 5 spaces.";
 
-  const lastNameSpaces = (lastName.value.trim().match(/ /g) || []).length
+  const lastNameSpaces = (lastName.value.trim().match(/ /g) || []).length;
 
   if (nameRegex.test(lastName.value.trim()))
     lastNameError.value = "Name cannot contain numbers or special characters.";
@@ -184,37 +184,6 @@ const handleSignUp = async () => {
 
   if (!umbcIdRegex.test(workerId.value))
     workerIdError.value = "Please enter valid UMBC ID (AB12345)";
-
-  /*
-  const validationErrors = [];
-
-  // no specific format validation, just making sure they're not empty
-  if (!firstName.value) validationErrors.push("First name is required.");
-  if (!lastName.value) validationErrors.push("Last name is required.");
-  if (!password.value) validationErrors.push("Password is required.");
-
-  // Now for the format-specific validation
-  if (!phone.value) validationErrors.push("Phone number is required.");
-  else if (!phoneRegex.test(phone.value))
-    validationErrors.push(
-      "Please enter valid phone number format (XXX-XXX-XXXX)",
-    );
-
-  if (!email.value) validationErrors.push("UMBC email is required.");
-  else if (!email.value.endsWith("@umbc.edu"))
-    validationErrors.push("Please enter valid UMBC email (...@umbc.edu)");
-
-  if (!workerId.value) validationErrors.push("UMBC ID is required.");
-  else if (!umbcIdRegex.test(workerId.value))
-    validationErrors.push("Please enter valid UMBC ID (AB12345)");
-
-  if (validationErrors.length > 0) {
-    errorMessage.value = validationErrors.join("\n");
-    isSubmitting.value = false;
-    return;
-  }
-
-  */
 
   // stops form submission in case of any error
   if (
