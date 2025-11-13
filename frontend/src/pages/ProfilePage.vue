@@ -119,18 +119,23 @@
                       Tracking: {{ report.tracking_num }}
                     </p>
                   </div>
-                  <span
+                  <select
+                    :value="report.completed_status"
+                    @change="updatePackageStatus(report, $event)"
                     :class="[
                       'status-badge',
-                      report.completed_status === 'Delivered'
-                        ? 'status-delivered'
-                        : report.completed_status === 'Pending'
-                          ? 'status-pending'
-                          : 'status-not-delivered',
+                      'status-select',
+                      getStatusClass(report.completed_status),
                     ]"
                   >
-                    {{ report.completed_status }}
-                  </span>
+                    <option
+                      v-for="option in statusOptions"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
                 </li>
               </ul>
             </div>
@@ -149,6 +154,8 @@
 import { ref, onMounted, computed } from "vue";
 import { supabase } from "../composables/supabase";
 // import { useRouter } from 'vue-router'; // Not needed for the temporary fix
+
+const statusOptions = ref(["Pending", "Delivered", "Not Delivered"]);
 
 // --- Reactive Data ---
 const employeeProfile = ref(null);
@@ -170,6 +177,43 @@ const initials = computed(() => {
   }
   return "";
 });
+
+const getStatusClass = (status) => {
+  switch (status.toLowerCase()) {
+    case "pending":
+      return "status-pending";
+    case "delivered":
+      return "status-delivered";
+    case "not delivered":
+      return "status-not-delivered";
+    default:
+      return "";
+  }
+};
+
+const updatePackageStatus = async (pkg, event) => {
+  const newStatus = event.target.value;
+  const oldStatus = pkg.completed_status; // Store old status for revert on failure
+
+  pkg.completed_status = newStatus;
+
+  try {
+    const { error } = await supabase
+      .from("report")
+      .update({ completed_status: newStatus })
+      .eq("report_num", pkg.report_num);
+
+    if (error) {
+      throw error;
+    }
+    console.log(`Package ${pkg.report_num} status updated to ${newStatus}`);
+  } catch (error) {
+    console.error("Error updating status:", error.message);
+    pkg.status = oldStatus;
+
+    alert(`Failed to update status for ${pkg.tracking_num}. Please try again.`);
+  }
+};
 
 /**
  * Fetches the profile and reports for a given worker ID.
