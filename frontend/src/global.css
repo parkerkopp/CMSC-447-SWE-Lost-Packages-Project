@@ -969,35 +969,34 @@ form-group input:-webkit-autofill,
 }
 
 /* Status Badges */
+
 .status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 5px;
+  height: 25px;
+  width: 110px;
   border-radius: 20px; /* Pill shape */
   font-weight: 600;
   font-size: 0.8rem;
   text-transform: capitalize;
   text-align: center;
-  cursor: pointer;
+  border: none;
 }
 
 .status-pending {
   background-color: rgba(253, 181, 21, 0.3); /* Light yellow */
   color: var(--umbc-retriever-brown); /* Darker yellow text */
-  border-color: rgba(253, 181, 21, 0.3);
 }
 
 .status-delivered {
   background-color: rgba(0, 113, 118, 0.3); /* Light green */
   color: var(--umbc-aok-teal); /* Darker green text */
-  border-color: rgba(0, 113, 118, 0.3);
 }
 
 .status-not-delivered {
   background-color: rgba(218, 33, 40, 0.3); /* Light red */
   color: var(--umbc-red); /* Darker red text */
-  border-color: rgba(218, 33, 40, 0.3);
 }
 
 .status-pending:focus,
@@ -1122,4 +1121,3 @@ form-group input:-webkit-autofill,
 .confirm-btn-confirm:hover {
   background-color: var(--umbc-red-hover); /* A slightly darker red */
 }
-
