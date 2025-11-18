@@ -138,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import { supabase } from "../composables/supabase";
 
 const packages = ref([]);
@@ -239,19 +239,15 @@ onMounted(async () => {
 
     const { data, error: fetchError } = await supabase
       .from("lost_package")
-      .select("*, report ( completed_status )");
-
+      .select("*")
+      .order("id", { ascending: false });
     if (fetchError) {
       throw fetchError;
     }
 
     if (data) {
-      // Ensure 'status' field exists or set a default if not present in your actual data
-      packages.value = data.map((pkg) => ({
-        ...pkg,
-        status: pkg.report?.[0]?.completed_status,
-      }));
-      console.log("Fetched packages:", data);
+      packages.value = data;
+      console.log("Fetched packages:", packages.value);
     } else {
       packages.value = [];
       console.log("No data returned from database");
@@ -261,6 +257,26 @@ onMounted(async () => {
     console.error("Error fetching data:", err);
   } finally {
     loading.value = false;
+
+    packageSubscription.value = supabase
+      .channel("public:lost_package")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "lost_package" },
+        (payload) => {
+          handlePackageUpdate(payload.new);
+        },
+      )
+      .subscribe((status, err) => {
+        if (err) {
+          console.error("Supabase subscription error:", err);
+        } else {
+          console.log(
+            "Supabase connected to lost_package for realtime updates:",
+            status,
+          );
+        }
+      });
   }
 });
 </script>
