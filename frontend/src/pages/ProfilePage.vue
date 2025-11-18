@@ -198,13 +198,25 @@ const updatePackageStatus = async (pkg, event) => {
   pkg.completed_status = newStatus;
 
   try {
-    const { error } = await supabase
+    const { error: reportError } = await supabase
       .from("report")
       .update({ completed_status: newStatus })
       .eq("report_num", pkg.report_num);
 
-    if (error) {
-      throw error;
+    if (reportError) {
+      throw reportError;
+    }
+
+    const { error: packageError } = await supabase
+      .from("lost_package")
+      .update({ status: newStatus })
+      .eq("tracking_num", pkg.tracking_num);
+
+    if (packageError) {
+      console.warn(
+        "Report updated, but lost_package sync failed:",
+        packageError,
+      );
     }
     console.log(`Package ${pkg.report_num} status updated to ${newStatus}`);
   } catch (error) {
