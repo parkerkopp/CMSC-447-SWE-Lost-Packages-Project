@@ -127,6 +127,7 @@
                       'status-select',
                       getStatusClass(report.completed_status),
                     ]"
+                    style="cursor: pointer"
                   >
                     <option
                       v-for="option in statusOptions"

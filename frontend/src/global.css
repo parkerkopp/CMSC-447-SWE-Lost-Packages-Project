@@ -36,6 +36,7 @@
   display: flex;
   align-items: center;
   margin-left: 80px;
+  cursor: default;
 }
 
 .icon {
@@ -127,12 +128,14 @@
   font-weight: 600;
   margin: 0;
   color: var(--umbc-black);
+  cursor: default;
 }
 
 .subtitle {
   color: var(--umbc-dark-gray);
   font-size: 1rem;
   margin-bottom: 2rem;
+  cursor: default;
 }
 
 .reports-form-container {
@@ -172,6 +175,10 @@
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--umbc-black);
+}
+
+.form-group input[type="date"] {
+  cursor: pointer;
 }
 
 .form-group input,
@@ -388,6 +395,7 @@ form-group input:-webkit-autofill,
   text-align: center;
   max-width: 48rem;
   margin-bottom: 3rem;
+  cursor: default;
 }
 
 .homepage-title {
@@ -443,7 +451,7 @@ form-group input:-webkit-autofill,
 .stat-card,
 .action-card {
   background-color: white;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--background-color);
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
@@ -457,6 +465,7 @@ form-group input:-webkit-autofill,
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
+  cursor: default;
 }
 
 .stat-title {
@@ -475,18 +484,12 @@ form-group input:-webkit-autofill,
   font-weight: 700;
   color: var(--umbc-black);
   margin-top: auto;
+  cursor: default;
 }
 
 /* Action card specific */
 .action-card {
   justify-content: space-between;
-}
-
-.action-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
 }
 
 .action-icon img {
@@ -498,6 +501,7 @@ form-group input:-webkit-autofill,
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--umbc-black);
+  cursor: default;
 }
 
 .action-description {
@@ -506,6 +510,7 @@ form-group input:-webkit-autofill,
   line-height: 1.5;
   margin-bottom: 1.5rem;
   flex-grow: 1;
+  cursor: default;
 }
 
 /* Button base styles */
@@ -547,6 +552,7 @@ form-group input:-webkit-autofill,
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.5rem;
+  cursor: default;
 }
 
 .profile-header img {
@@ -599,7 +605,7 @@ form-group input:-webkit-autofill,
 .profile-card {
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--background-color);
   box-shadow: var(--box-shadow);
   flex-grow: 1;
 }
@@ -611,6 +617,7 @@ form-group input:-webkit-autofill,
   margin-top: 0;
   margin-bottom: 20px;
   padding-bottom: 12px;
+  cursor: default;
 }
 
 /* Left Column: Profile Summary Card */
@@ -634,6 +641,7 @@ form-group input:-webkit-autofill,
   margin-bottom: 16px;
   font-size: 30px;
   font-weight: 600;
+  cursor: default;
 }
 
 .profile-name {
@@ -642,6 +650,7 @@ form-group input:-webkit-autofill,
   color: var(--umbc-black);
   text-align: center;
   margin: 0;
+  cursor: default;
 }
 
 .profile-position {
@@ -659,6 +668,7 @@ form-group input:-webkit-autofill,
   gap: 16px;
   margin-top: auto;
   margin-bottom: 0;
+  cursor: default;
 }
 
 .contact-item {
@@ -687,6 +697,7 @@ form-group input:-webkit-autofill,
   display: grid;
   grid-template-columns: 1fr 1fr; /* Two columns */
   gap: 20px;
+  cursor: default;
 }
 
 .detail-label {
@@ -709,6 +720,7 @@ form-group input:-webkit-autofill,
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  cursor: default;
 }
 
 .permission-tag {
@@ -724,6 +736,7 @@ form-group input:-webkit-autofill,
 .report-list-container {
   max-height: 300px;
   overflow-y: auto;
+  cursor: default;
 }
 
 .report-list {
@@ -807,6 +820,7 @@ form-group input:-webkit-autofill,
   font-weight: 600;
   margin: 0;
   color: var(--umbc-black);
+  cursor: default;
 }
 
 .page-header .subtitle {
@@ -819,7 +833,7 @@ form-group input:-webkit-autofill,
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 25px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--background-color);
   box-shadow: var(--box-shadow);
 }
 
@@ -842,6 +856,7 @@ form-group input:-webkit-autofill,
   font-weight: 500;
   margin: 0;
   color: var(--umbc-black);
+  cursor: default;
 }
 
 .filter-header svg {
@@ -867,6 +882,10 @@ form-group input:-webkit-autofill,
   font-weight: 500;
 }
 
+.filter-select {
+  cursor: pointer;
+}
+
 .filter-input,
 .filter-select {
   padding: 10px 12px;
@@ -889,8 +908,8 @@ form-group input:-webkit-autofill,
 .filter-input:hover,
 .filter-select:hover {
   outline: none;
-  border-color: var(--umbc-dark-gray);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+  border-color: var(--umbc-gold);
+  box-shadow: 0 0 0 3px rgba(253, 181, 21, 0.5);
 }
 
 .clear-filters-btn {
@@ -924,6 +943,7 @@ form-group input:-webkit-autofill,
   font-size: 1rem;
   font-weight: 500;
   margin: 0;
+  cursor: default;
 }
 
 .table-responsive {
@@ -932,6 +952,7 @@ form-group input:-webkit-autofill,
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: default;
 }
 
 .packages-table {
@@ -1054,6 +1075,7 @@ form-group input:-webkit-autofill,
   align-items: center;
   z-index: 1000;
   padding: 1rem;
+  cursor: default;
 }
 
 .confirm-modal-content {
@@ -1120,4 +1142,9 @@ form-group input:-webkit-autofill,
 }
 .confirm-btn-confirm:hover {
   background-color: var(--umbc-red-hover); /* A slightly darker red */
+}
+
+/* Sign In page */
+.auth-container {
+  cursor: default;
 }
