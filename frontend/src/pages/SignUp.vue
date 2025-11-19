@@ -132,7 +132,7 @@ const errorMessage = ref(null); // for catch block
 // this impacts the tests for validation below
 const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 const umbcIdRegex = /^[A-Za-z]{2}\d{5}$/;
-const nameRegex = /[0-9!@#$%^&*()_+=<>?/\\|~\[\]{}]/;
+const nameRegex = /[0-9!@#$%^&*()_+=<>?/\\|~\[\]{}\s]/;
 const emailRegex = /^[A-Za-z0-9]+@umbc\.edu$/;
 
 // Form validation
@@ -158,26 +158,17 @@ const handleSignUp = async () => {
   passwordError.value = null;
   errorMessage.value = null;
 
-  const firstNameSpaces = (firstName.value.trim().match(/ /g) || []).length;
-
   if (nameRegex.test(firstName.value.trim()))
     firstNameError.value = "Name cannot contain numbers or special characters.";
-  else if (firstNameSpaces > 5)
-    firstNameError.value = "Name can contain at most 5 spaces.";
-
-  const lastNameSpaces = (lastName.value.trim().match(/ /g) || []).length;
 
   if (nameRegex.test(lastName.value.trim()))
     lastNameError.value = "Name cannot contain numbers or special characters.";
-  else if (lastNameSpaces > 5)
-    lastNameError.value = "Name can contain at most 5 spaces.";
 
   if (password.value.length < 6)
     passwordError.value = "Password must be at least 6 characters.";
 
   if (!phoneRegex.test(phone.value))
-    phoneError.value =
-      "Please enter valid phone number in format (XXX-XXX-XXXX)";
+    phoneError.value = "Please enter valid phone number in format (XXX-XXX-XXXX)";
 
   if (!emailRegex.test(email.value))
     emailError.value = "Please enter valid UMBC email (...@umbc.edu)";
