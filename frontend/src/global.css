@@ -1065,7 +1065,7 @@ form-group input:-webkit-autofill,
   max-width: 400px;
   width: 100%;
   text-align: center;
-  /* Re-using your existing animation */
+  /* Re-using existing animation */
   transform: scale(0.95);
   opacity: 0;
   animation: modal-fade-in 0.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -1104,7 +1104,7 @@ form-group input:-webkit-autofill,
   flex: 1;
 }
 
-/* Styled like your .clear-btn */
+/* Styled like .clear-btn */
 .confirm-btn-cancel {
   background-color: var(--container-background);
   color: var(--umbc-black);
@@ -1114,7 +1114,7 @@ form-group input:-webkit-autofill,
   background-color: var(--background-color);
 }
 
-/* Styled with your UMBC Red for a destructive action */
+/* Styled with UMBC Red for a destructive action */
 .confirm-btn-confirm {
   background-color: var(--umbc-red);
   color: white;
@@ -1123,3 +1123,24 @@ form-group input:-webkit-autofill,
   background-color: var(--umbc-red-hover); /* A slightly darker red */
 }
 
+/*
+*****************************************
+*** NEW: Global error message styling ***
+*****************************************
+*/
+
+.form-group {
+  position: relative;
+}
+
+.form-group span {
+  color: #991b1b;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-group span::before {
+  content: "⚠ ";
+}

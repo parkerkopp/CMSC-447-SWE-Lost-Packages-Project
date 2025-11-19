@@ -34,6 +34,7 @@
             required
             placeholder="Enter tracking number"
           />
+          <span v-if="trackingError">{{ trackingError }}</span>
         </div>
         <div class="form-group">
           <label for="recipient-name">Recipient Name *</label>
@@ -45,6 +46,7 @@
             required
             placeholder="Name as it appears on the package"
           />
+          <span v-if="recipientError">{{ recipientError }}</span>
         </div>
         <div class="form-group">
           <label for="building">Building *</label>
@@ -141,6 +143,10 @@ const isSubmitting = ref(false);
 const submitSuccess = ref(false);
 const submitError = ref(null);
 
+// New refs for my inline error messages
+const trackingError = ref(null);
+const recipientError = ref(null);
+
 const availableBuildings = ref([
   "Academic Services",
   "Administration",
@@ -196,6 +202,7 @@ const getErrorMessage = (error) => {
 
   console.error("Raw Supabase Error:", error); // Logs the original error to the console for debugging
 
+  /*
   // Duplicate tracking_num
   if (error.code === "23505") {
     if (error.message && error.message.includes("package_tracking_num_key")) {
@@ -214,6 +221,7 @@ const getErrorMessage = (error) => {
   ) {
     return "This tracking number has already been reported. Please check the number.";
   }
+  */
 
   // Network error
   if (
@@ -237,13 +245,19 @@ const clearError = () => {
 };
 
 const reportFormSubmit = async () => {
+  // Reset messages
+  submitSuccess.value = false;
+  submitError.value = null;
+  trackingError.value = null;
+  recipientError.value = null;
+
   if (!isFormValid.value) {
     submitError.value = "Please fill in all required fields.";
     return;
   }
 
   if (!validateRecipiantName(recipientName.value)) {
-    submitError.value =
+    recipientError.value =
       "Please enter a valid recipient name. Names cannot be just single letters separated by spaces (e.g., 'J o h n').";
     return;
   }
@@ -253,10 +267,8 @@ const reportFormSubmit = async () => {
     .split(/\s+/)
     .join(" ");
 
-  // Reset messages
-  submitSuccess.value = false;
-  submitError.value = null;
   isSubmitting.value = true;
+
 
   // package object with the current package form data
   const packageData = {
@@ -275,9 +287,13 @@ const reportFormSubmit = async () => {
       "submit_package_report",
       packageData,
     );
-
+    
     if (error) {
-      submitError.value = getErrorMessage(error);
+      if (error.code === "23505") {
+        trackingError.value = "This tracking number has already been reported. Please check the number.";
+      } else {
+        submitError.value = getErrorMessage(error); 
+      }
       return;
     }
 
