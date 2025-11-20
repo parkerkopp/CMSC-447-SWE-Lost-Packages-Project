@@ -34,7 +34,7 @@
             required
             placeholder="Enter tracking number"
           />
-          <span v-if="trackingError">{{ trackingError }}</span>
+          <span v-if="trackingError">{{ trackingError }}</span> <!-- NEW -->
         </div>
         <div class="form-group">
           <label for="recipient-name">Recipient Name *</label>
@@ -46,7 +46,7 @@
             required
             placeholder="Name as it appears on the package"
           />
-          <span v-if="recipientError">{{ recipientError }}</span>
+          <span v-if="recipientError">{{ recipientError }}</span> <!-- NEW -->
         </div>
         <div class="form-group">
           <label for="building">Building *</label>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="form-group">
-          <label for="room-num">Room Number</label>
+          <label for="room-num">Room Number (Optional)</label>
           <input
             type="text"
             id="room-num"
@@ -71,6 +71,7 @@
             maxlength="8"
             placeholder="Room number"
           />
+          <span v-if="roomNumError">{{ roomNumError }}</span> <!-- NEW -->
         </div>
 
         <div class="form-group">
@@ -86,7 +87,7 @@
 
         <!-- Typical package labels -->
         <div class="form-group">
-          <label for="carrier">Shipping Carrier (optional):</label>
+          <label for="carrier">Shipping Carrier (Optional)</label>
           <select id="carrier" v-model="carrier">
             <option value="">Select carrier...</option>
             <option value="UPS">UPS</option>
@@ -143,9 +144,13 @@ const isSubmitting = ref(false);
 const submitSuccess = ref(false);
 const submitError = ref(null);
 
-// New refs for my inline error messages
+// NEW: Refs for my inline error messages
 const trackingError = ref(null);
 const recipientError = ref(null);
+const roomNumError = ref(null);
+
+// NEW: Regex expresssion for tracking num and room num
+const alphaNumericRegex = /^[A-Za-z0-9]+$/;
 
 const availableBuildings = ref([
   "Academic Services",
@@ -245,20 +250,15 @@ const clearError = () => {
 };
 
 const reportFormSubmit = async () => {
-  // Reset messages
+  // NEW: Moved message resets here
   submitSuccess.value = false;
   submitError.value = null;
   trackingError.value = null;
   recipientError.value = null;
+  roomNumError.value = null;
 
   if (!isFormValid.value) {
     submitError.value = "Please fill in all required fields.";
-    return;
-  }
-
-  if (!validateRecipiantName(recipientName.value)) {
-    recipientError.value =
-      "Please enter a valid recipient name. Names cannot be just single letters separated by spaces (e.g., 'J o h n').";
     return;
   }
 
@@ -281,21 +281,47 @@ const reportFormSubmit = async () => {
     p_notes: notes.value.trim() || null,
   };
 
+  // NEW: Updated validation logic
+  let hasError = false;
   try {
+    const { data: existingPackage } = await supabase
+      .from("lost_package")
+      .select("id")
+      .eq("tracking_num", trackingNumber.value.trim())
+      .maybeSingle();
+
+    if (!alphaNumericRegex.test(trackingNumber.value.trim()) || trackingNumber.value.trim().length < 8) {
+      trackingError.value = "Please enter a valid tracking number.";
+      hasError = true;
+    }
+
+    if (existingPackage) {
+      trackingError.value =
+        "This tracking number has already been reported. Please check the number.";
+      hasError = true;
+    }
+
+    if (!validateRecipiantName(recipientName.value)) {
+      recipientError.value =
+        "Please enter a valid recipient name.";
+      hasError = true;
+    }
+
+    if (roomNum.value.trim() !== "" && !alphaNumericRegex.test(roomNum.value.trim())) {
+      roomNumError.value =
+        "Room number can only contain letters and numbers.";
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     // Insert data into Supabase
     const { data, error } = await supabase.rpc(
       "submit_package_report",
       packageData,
     );
     
-    if (error) {
-      if (error.code === "23505") {
-        trackingError.value = "This tracking number has already been reported. Please check the number.";
-      } else {
-        submitError.value = getErrorMessage(error); 
-      }
-      return;
-    }
+    if (error) throw error;
 
     console.log("Package and report inserted successfully:", data);
     submitSuccess.value = true;
@@ -314,18 +340,17 @@ const reportFormSubmit = async () => {
   }
 };
 
+// NEW: Updated to include regex and space check
 const validateRecipiantName = (name) => {
   const trimmedName = name.trim();
+  const invalidChars = /[0-9!@#$%^&*()_+=<>?/\\|~\[\]{}]/;
+  const maxSpaces = 1;
 
-  const words = trimmedName.split(/\s+/);
+  if (invalidChars.test(trimmedName)) return false;
+  const spaceCount = (trimmedName.match(/\s/g) || []).length;
+  if (spaceCount > maxSpaces) return false;
 
-  if (words.length <= 1) return true;
-
-  if (words.length >= 5) return false;
-
-  const allAreSingleLetters = words.every((word) => word.length === 1);
-
-  return !allAreSingleLetters;
+  return true;
 };
 
 const clearForm = () => {
