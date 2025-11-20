@@ -257,26 +257,6 @@ onMounted(async () => {
     console.error("Error fetching data:", err);
   } finally {
     loading.value = false;
-
-    packageSubscription.value = supabase
-      .channel("public:lost_package")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "lost_package" },
-        (payload) => {
-          handlePackageUpdate(payload.new);
-        },
-      )
-      .subscribe((status, err) => {
-        if (err) {
-          console.error("Supabase subscription error:", err);
-        } else {
-          console.log(
-            "Supabase connected to lost_package for realtime updates:",
-            status,
-          );
-        }
-      });
   }
 });
 </script>
