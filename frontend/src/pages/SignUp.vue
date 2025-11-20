@@ -268,7 +268,7 @@ const handleSignUp = async () => {
   width: 100%;
   max-width: 600px;
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f4f4f4;
   border-radius: 12px;
   padding: 24px 32px;
   box-shadow:
