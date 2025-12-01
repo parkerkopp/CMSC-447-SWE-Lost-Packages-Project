@@ -949,15 +949,15 @@ form-group input:-webkit-autofill,
 
 .table-responsive {
   width: 100%;
+  display: block;
   overflow-x: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: default;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
 }
 
 .packages-table {
-  width: 95%;
+  width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
   font-size: 0.9em;
   text-align: left;
@@ -1255,5 +1255,14 @@ form-group input:-webkit-autofill,
 
   .link-container {
     margin-right: 0;
+  }
+
+  .report-form {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reports-form-container {
+    padding: 1.5rem 1rem;
   }
 }
