@@ -11,6 +11,3 @@
 - git commit -m "message here"
 - git branch -M your_branch
 - git push -u origin your_branch
-
-# Vercel Domain
-https://lost-package-services-app.vercel.app/
