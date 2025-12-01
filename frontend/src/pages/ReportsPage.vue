@@ -34,7 +34,8 @@
             required
             placeholder="Enter tracking number"
           />
-          <span v-if="trackingError">{{ trackingError }}</span> <!-- NEW -->
+          <span v-if="trackingError">{{ trackingError }}</span>
+          <!-- NEW -->
         </div>
         <div class="form-group">
           <label for="recipient-name">Recipient Name *</label>
@@ -46,7 +47,8 @@
             required
             placeholder="Name as it appears on the package"
           />
-          <span v-if="recipientError">{{ recipientError }}</span> <!-- NEW -->
+          <span v-if="recipientError">{{ recipientError }}</span>
+          <!-- NEW -->
         </div>
         <div class="form-group">
           <label for="building">Building *</label>
@@ -71,7 +73,8 @@
             maxlength="8"
             placeholder="Room number"
           />
-          <span v-if="roomNumError">{{ roomNumError }}</span> <!-- NEW -->
+          <span v-if="roomNumError">{{ roomNumError }}</span>
+          <!-- NEW -->
         </div>
 
         <div class="form-group">
@@ -269,7 +272,6 @@ const reportFormSubmit = async () => {
 
   isSubmitting.value = true;
 
-
   // package object with the current package form data
   const packageData = {
     p_tracking_num: trackingNumber.value.trim(),
@@ -290,7 +292,10 @@ const reportFormSubmit = async () => {
       .eq("tracking_num", trackingNumber.value.trim())
       .maybeSingle();
 
-    if (!alphaNumericRegex.test(trackingNumber.value.trim()) || trackingNumber.value.trim().length < 8) {
+    if (
+      !alphaNumericRegex.test(trackingNumber.value.trim()) ||
+      trackingNumber.value.trim().length < 8
+    ) {
       trackingError.value = "Please enter a valid tracking number.";
       hasError = true;
     }
@@ -302,14 +307,15 @@ const reportFormSubmit = async () => {
     }
 
     if (!validateRecipiantName(recipientName.value)) {
-      recipientError.value =
-        "Please enter a valid recipient name.";
+      recipientError.value = "Please enter a valid recipient name.";
       hasError = true;
     }
 
-    if (roomNum.value.trim() !== "" && !alphaNumericRegex.test(roomNum.value.trim())) {
-      roomNumError.value =
-        "Room number can only contain letters and numbers.";
+    if (
+      roomNum.value.trim() !== "" &&
+      !alphaNumericRegex.test(roomNum.value.trim())
+    ) {
+      roomNumError.value = "Room number can only contain letters and numbers.";
       hasError = true;
     }
 
@@ -320,10 +326,10 @@ const reportFormSubmit = async () => {
       "submit_package_report",
       packageData,
     );
-    
+
     if (error) throw error;
 
-    console.log("Package and report inserted successfully:", data);
+    // console.log("Package and report inserted successfully:", data);
     submitSuccess.value = true;
 
     // Clear form after successful Submission
