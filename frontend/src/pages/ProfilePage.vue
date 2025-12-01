@@ -219,7 +219,7 @@ const updatePackageStatus = async (pkg, event) => {
         packageError,
       );
     }
-    console.log(`Package ${pkg.report_num} status updated to ${newStatus}`);
+    // console.log(`Package ${pkg.report_num} status updated to ${newStatus}`);
   } catch (error) {
     console.error("Error updating status:", error.message);
     pkg.status = oldStatus;

@@ -247,7 +247,6 @@ onMounted(async () => {
 
     if (data) {
       packages.value = data;
-      console.log("Fetched packages:", packages.value);
     } else {
       packages.value = [];
       console.log("No data returned from database");
