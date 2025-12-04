@@ -1204,7 +1204,7 @@ form-group input:-webkit-autofill,
   transform: translateY(-9px) rotate(-45deg);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1055px) {
   .title-container {
     margin-left: 20px;
   }

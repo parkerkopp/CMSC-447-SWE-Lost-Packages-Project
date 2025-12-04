@@ -8,6 +8,8 @@ import ReportsPage from "./pages/ReportsPage.vue";
 import HomePage from "./pages/HomePage.vue";
 import SignIn from "./pages/SignIn.vue";
 import SignUp from "./pages/SignUp.vue";
+// NEW: Import UpdatePassword component
+import UpdatePassword from "./pages/UpdatePassword.vue";
 
 const routes = [
   { 
@@ -42,6 +44,11 @@ const routes = [
     name: "Reports",
     component: ReportsPage,
     meta: { requiresAuth: true } // This page requires login
+  },
+  { // NEW: Update Password Route
+    path: "/update-password",
+    name: "UpdatePassword",
+    component: UpdatePassword
   },
 ];
 

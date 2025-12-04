@@ -5,7 +5,6 @@
       <p class="auth-subtitle">Enter your credentials to access your account</p>
     </div>
 
-    <!-- The @submit.prevent calls our handleSignIn function -->
     <form @submit.prevent="handleSignIn" class="auth-form" novalidate>
       <div class="form-group">
         <label for="email">Email Address *</label>
@@ -16,6 +15,7 @@
           required
           placeholder="Enter your email"
         />
+        <span v-if="emailError">{{ emailError }}</span>
       </div>
 
       <div class="form-group">
@@ -27,10 +27,15 @@
           required
           placeholder="Enter your password"
         />
+        <span v-if="passwordError">{{ passwordError }}</span>
       </div>
 
       <div class="button-group">
-        <button class="submit-btn" type="submit" :disabled="isSubmitting">
+        <button
+          class="submit-btn"
+          type="submit"
+          :disabled="!isFormValid || isSubmitting"
+        >
           {{ isSubmitting ? "Signing In..." : "Sign In" }}
         </button>
       </div>
@@ -40,67 +45,189 @@
           Don't have an account?
           <router-link to="/signup" class="auth-link">Sign Up</router-link>
         </p>
+        <p style="margin-top: 10px;">
+          <a href="#" @click.prevent="openForgotModal" class="auth-link">Forgot Password?</a>
+        </p>
       </div>
     </form>
 
-    <!-- Shows an error message if login fails -->
     <div class="error-message" v-if="errorMessage">
       {{ errorMessage }}
+    </div>
+
+    <div v-if="showForgotModal" class="modal-overlay" @click.self="closeForgotModal">
+      <div class="modal-content forgot-modal-content">
+        <h2 class="auth-title" style="margin-bottom: 1rem; font-size: 1.5rem;">Reset Password</h2>
+        
+        <div v-if="forgotSuccessMessage" class="success-message">
+          {{ forgotSuccessMessage }}
+        </div>
+        
+        <div v-else>
+          <p class="auth-subtitle" style="margin-bottom: 1.5rem;">
+            Enter your email address. We will send you a secure link to reset your password.
+          </p>
+
+          <form @submit.prevent="handleForgotPassword" novalidate>
+            <div class="form-group">
+              <label for="resetEmail" style="text-align: left; display: block;">Email Address *</label>
+              <input
+                type="email"
+                id="resetEmail"
+                v-model="resetEmail"
+                placeholder="Enter your work email"
+                required
+              />
+              <span v-if="resetEmailError">{{ resetEmailError }}</span>
+            </div>
+
+            <div class="error-message" v-if="forgotErrorMessage" style="margin-top: 1rem;">
+              {{ forgotErrorMessage }}
+            </div>
+
+            <div class="button-group" style="margin-top: 1.5rem;">
+              <button class="clear-btn" type="button" @click="closeForgotModal" :disabled="isResetting">
+                Cancel
+              </button>
+              <button class="submit-btn" type="submit" :disabled="!isForgotFormValid || isResetting">
+                {{ isResetting ? "Sending..." : "Send Reset Link" }}
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div v-if="forgotSuccessMessage" class="button-group" style="justify-content: center;">
+             <button class="submit-btn" @click="closeForgotModal">Close</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { supabase } from "../composables/supabase";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// --- Sign In State ---
 const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
-/**
- * Handles the user sign-in process.
- */
+// Validation Refs
+const emailError = ref(null);
+const passwordError = ref(null);
+
+// Regex
+const emailRegex = /^[A-Za-z0-9]+@umbc\.edu$/;
+
+// Computed: Button is disabled unless fields are filled
+const isFormValid = computed(() => {
+  return (
+    email.value.trim() !== "" &&
+    password.value.trim() !== ""
+  );
+});
+
+// --- Forgot Password State ---
+const showForgotModal = ref(false);
+const resetEmail = ref("");
+const newPassword = ref("");
+const confirmPassword = ref("");
+const isResetting = ref(false);
+const forgotErrorMessage = ref("");
+const forgotSuccessMessage = ref("");
+
+const resetEmailError = ref(null);
+const newPasswordError = ref(null);
+const confirmPasswordError = ref(null);
+
+
+// --- Sign In Logic ---
 const handleSignIn = async () => {
   isSubmitting.value = true;
   errorMessage.value = "";
+  emailError.value = null;
+  passwordError.value = null;
 
-  if (!email.value || !password.value) {
-    errorMessage.value = "Please fill in all fields";
-    isSubmitting.value = false;
-    return;
+  // 1. Client-side Validation (Inline)
+  if (!emailRegex.test(email.value)) {
+    emailError.value = "Please enter valid UMBC email (...@umbc.edu)";
   }
 
-  if (!email.value.endsWith("@umbc.edu")) {
-    errorMessage.value = "Please enter valid UMBC email (...@umbc.edu)";
+  // If any field errors exist, stop here.
+  if (emailError.value || passwordError.value) {
     isSubmitting.value = false;
     return;
   }
 
   try {
-    // This signs the user in against the 'auth.users' table
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.value,
       password: password.value,
     });
 
-    if (error) {
-      // Handle auth errors (e.g., "Invalid login credentials")
-      throw error;
-    }
+    if (error) throw error;
 
-    // If sign-in is successful, 'data.user' will exist
     router.push("/");
   } catch (error) {
     console.error("Sign in error:", error);
+    // General errors (like "Invalid login credentials") stay at the bottom
     errorMessage.value =
       error.message || "Failed to sign in. Please check your credentials.";
   } finally {
     isSubmitting.value = false;
+  }
+};
+
+// --- Forgot Password Logic ---
+const isForgotFormValid = computed(() => {
+  return (resetEmail.value.trim() !== "");
+});
+
+const openForgotModal = () => {
+  showForgotModal.value = true;
+  resetEmail.value = "";
+  forgotErrorMessage.value = "";
+  forgotSuccessMessage.value = "";
+  resetEmailError.value = null;
+};
+
+const closeForgotModal = () => {
+  showForgotModal.value = false;
+};
+
+const handleForgotPassword = async () => {
+  isResetting.value = true;
+  forgotErrorMessage.value = "";
+  resetEmailError.value = null;
+
+  // 1. Validation
+  if (!emailRegex.test(resetEmail.value)) {
+    resetEmailError.value = "Please enter valid UMBC email (...@umbc.edu)";
+    isResetting.value = false;
+    return;
+  }
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.value, {
+      redirectTo: window.location.origin, 
+    });
+    console.log("Redirect URL:", window.location.origin);
+
+    if (error) throw error;
+
+    forgotSuccessMessage.value = "Success! Check your email for the password reset link.";
+    console.log("Password reset email sent.");
+    
+  } catch (error) {
+    console.error("Reset password error:", error);
+    forgotErrorMessage.value = error.message || "Failed to send reset link.";
+  } finally {
+    isResetting.value = false;
   }
 };
 </script>
@@ -150,7 +277,6 @@ const handleSignIn = async () => {
 }
 
 .auth-form .button-group {
-  /* Use button-group for consistency */
   margin-top: 24px;
 }
 
@@ -162,10 +288,11 @@ const handleSignIn = async () => {
 }
 
 .auth-link {
-  color: #4f46e5; /* Using a generic blue */
+  color: #4f46e5; 
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
+  cursor: pointer;
 }
 
 .auth-link:hover {
@@ -177,7 +304,7 @@ const handleSignIn = async () => {
 .error-message,
 .success-message {
   width: 100%;
-  max-width: 1200px; /* Match reports container */
+  max-width: 1200px;
   margin: 0 auto 1.5rem auto;
   padding: 12px;
   text-align: center;
@@ -186,7 +313,7 @@ const handleSignIn = async () => {
   box-sizing: border-box;
 }
 .auth-form + .error-message {
-  max-width: 400px; /* For signin page */
+  max-width: 400px;
 }
 
 .error-message {
@@ -198,5 +325,34 @@ const handleSignIn = async () => {
   color: #065f46;
   background-color: #d1fae5;
   border: 1px solid #6ee7b7;
+}
+
+/* Modal Specific Overrides */
+.forgot-modal-content {
+  text-align: left;
+  max-width: 450px;
+}
+
+.forgot-modal-content .form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background-color: #f4f4f4;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+/* Inline Error Styles */
+.form-group span {
+  color: #991b1b;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+}
+.form-group span::before {
+  content: "⚠ ";
 }
 </style>
