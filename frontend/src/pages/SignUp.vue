@@ -221,9 +221,9 @@ const handleSignUp = async () => {
 
     if (profileError) throw profileError;
 
-    // alert(
-    //   "Account created successfully! You will be redirected to the home page.",
-    // );
+    alert(
+      "Account created successfully! You will be redirected to the home page.",
+    );
     router.push("/");
   } catch (error) {
     console.error("Sign up error:", error);
