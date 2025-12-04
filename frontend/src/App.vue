@@ -84,6 +84,11 @@ const toggleMenu = () => {
 // Check the auth state when the app loads and when it changes
 onMounted(() => {
   supabase.auth.onAuthStateChange((event, session) => {
+    // NEW: Redirect to Update Password page on PASSWORD_RECOVERY event
+    if (event === "PASSWORD_RECOVERY") {
+      router.push("/update-password");
+    }
+
     user.value = session?.user || null;
   });
 });

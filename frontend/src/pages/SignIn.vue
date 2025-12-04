@@ -65,7 +65,7 @@
         
         <div v-else>
           <p class="auth-subtitle" style="margin-bottom: 1.5rem;">
-            Enter your email and new password details.
+            Enter your email address. We will send you a secure link to reset your password.
           </p>
 
           <form @submit.prevent="handleForgotPassword" novalidate>
@@ -81,30 +81,6 @@
               <span v-if="resetEmailError">{{ resetEmailError }}</span>
             </div>
 
-            <div class="form-group">
-              <label for="newPassword" style="text-align: left; display: block;">New Password *</label>
-              <input
-                type="password"
-                id="newPassword"
-                v-model="newPassword"
-                placeholder="Enter new password"
-                required
-              />
-              <span v-if="newPasswordError">{{ newPasswordError }}</span>
-            </div>
-
-            <div class="form-group">
-              <label for="confirmPassword" style="text-align: left; display: block;">Confirm New Password *</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                v-model="confirmPassword"
-                placeholder="Confirm new password"
-                required
-              />
-              <span v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
-            </div>
-
             <div class="error-message" v-if="forgotErrorMessage" style="margin-top: 1rem;">
               {{ forgotErrorMessage }}
             </div>
@@ -113,8 +89,8 @@
               <button class="clear-btn" type="button" @click="closeForgotModal" :disabled="isResetting">
                 Cancel
               </button>
-              <button class="submit-btn" type="submit" :disabled="isResetting">
-                {{ isResetting ? "Updating..." : "Update Password" }}
+              <button class="submit-btn" type="submit" :disabled="!isForgotFormValid || isResetting">
+                {{ isResetting ? "Sending..." : "Send Reset Link" }}
               </button>
             </div>
           </form>
@@ -169,13 +145,6 @@ const resetEmailError = ref(null);
 const newPasswordError = ref(null);
 const confirmPasswordError = ref(null);
 
-const isForgotFormValid = computed(() => {
-  return (
-    resetEmail.value.trim() !== "" &&
-    newPassword.value.trim() !== "" &&
-    confirmPassword.value.trim() !== ""
-  );
-});
 
 // --- Sign In Logic ---
 const handleSignIn = async () => {
@@ -215,16 +184,16 @@ const handleSignIn = async () => {
 };
 
 // --- Forgot Password Logic ---
+const isForgotFormValid = computed(() => {
+  return (resetEmail.value.trim() !== "");
+});
+
 const openForgotModal = () => {
   showForgotModal.value = true;
   resetEmail.value = "";
-  newPassword.value = "";
-  confirmPassword.value = "";
   forgotErrorMessage.value = "";
   forgotSuccessMessage.value = "";
   resetEmailError.value = null;
-  newPasswordError.value = null;
-  confirmPasswordError.value = null;
 };
 
 const closeForgotModal = () => {
@@ -235,49 +204,28 @@ const handleForgotPassword = async () => {
   isResetting.value = true;
   forgotErrorMessage.value = "";
   resetEmailError.value = null;
-  newPasswordError.value = null;
-  confirmPasswordError.value = null;
 
-  let hasError = false;
-
-  if (!resetEmail.value) {
-    resetEmailError.value = "Email is required.";
-    hasError = true;
-  } else if (!emailRegex.test(resetEmail.value)) {
+  // 1. Validation
+  if (!emailRegex.test(resetEmail.value)) {
     resetEmailError.value = "Please enter valid UMBC email (...@umbc.edu)";
-    hasError = true;
-  }
-
-  if (!newPassword.value) {
-    newPasswordError.value = "New password is required.";
-    hasError = true;
-  } else if (newPassword.value.length < 6) {
-    newPasswordError.value = "Password must be at least 6 characters.";
-    hasError = true;
-  }
-
-  if (newPassword.value !== confirmPassword.value) {
-    confirmPasswordError.value = "Passwords do not match.";
-    hasError = true;
-  }
-
-  if (hasError) {
     isResetting.value = false;
     return;
   }
 
   try {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(resetEmail.value, {
-      redirectTo: window.location.origin + '/reset-password',
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.value, {
+      redirectTo: window.location.origin, 
     });
+    console.log("Redirect URL:", window.location.origin);
 
     if (error) throw error;
 
-    forgotSuccessMessage.value = "Success! A password reset link has been sent to your email.";
+    forgotSuccessMessage.value = "Success! Check your email for the password reset link.";
+    console.log("Password reset email sent.");
     
   } catch (error) {
     console.error("Reset password error:", error);
-    forgotErrorMessage.value = error.message || "Failed to initiate password reset.";
+    forgotErrorMessage.value = error.message || "Failed to send reset link.";
   } finally {
     isResetting.value = false;
   }
@@ -396,7 +344,7 @@ const handleForgotPassword = async () => {
   margin-bottom: 8px;
 }
 
-/* Inline Error Styles (Same as SignUp) */
+/* Inline Error Styles */
 .form-group span {
   color: #991b1b;
   font-size: 12px;
