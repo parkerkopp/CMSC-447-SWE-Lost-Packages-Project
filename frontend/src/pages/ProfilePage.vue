@@ -224,7 +224,7 @@ const updatePackageStatus = async (pkg, event) => {
     console.error("Error updating status:", error.message);
     pkg.status = oldStatus;
 
-    alert(`Failed to update status for ${pkg.tracking_num}. Please try again.`);
+    // alert(`Failed to update status for ${pkg.tracking_num}. Please try again.`);
   }
 };
 

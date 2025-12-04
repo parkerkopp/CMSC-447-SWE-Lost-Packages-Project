@@ -122,7 +122,7 @@ const fetchStats = async () => {
     const { count: pendingCount, error: pendingError } = await supabase
       .from("report")
       .select("*", { count: "exact", head: true })
-      .eq("completed_status", "Not Delivered");
+      .eq("completed_status", "Pending");
 
     if (!pendingError) {
       stats.value.pendingReports = pendingCount || 0;
@@ -149,4 +149,3 @@ onMounted(() => {
   fetchStats();
 });
 </script>
-
