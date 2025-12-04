@@ -168,7 +168,8 @@ const handleSignUp = async () => {
     passwordError.value = "Password must be at least 6 characters.";
 
   if (!phoneRegex.test(phone.value))
-    phoneError.value = "Please enter valid phone number in format (XXX-XXX-XXXX)";
+    phoneError.value =
+      "Please enter valid phone number in format (XXX-XXX-XXXX)";
 
   if (!emailRegex.test(email.value))
     emailError.value = "Please enter valid UMBC email (...@umbc.edu)";
@@ -220,9 +221,9 @@ const handleSignUp = async () => {
 
     if (profileError) throw profileError;
 
-    alert(
-      "Account created successfully! You will be redirected to the home page.",
-    );
+    // alert(
+    //   "Account created successfully! You will be redirected to the home page.",
+    // );
     router.push("/");
   } catch (error) {
     console.error("Sign up error:", error);

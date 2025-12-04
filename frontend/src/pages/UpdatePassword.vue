@@ -99,8 +99,8 @@ const handleUpdatePassword = async () => {
 
     if (error) throw error;
 
-    alert("Password updated successfully! Redirecting to home...");
-    router.push("/"); 
+    // alert("Password updated successfully! Redirecting to home...");
+    router.push("/");
   } catch (error) {
     console.error("Update password error:", error);
     errorMessage.value = error.message || "Failed to update password.";
@@ -183,3 +183,4 @@ const handleUpdatePassword = async () => {
   content: "⚠ ";
 }
 </style>
+
