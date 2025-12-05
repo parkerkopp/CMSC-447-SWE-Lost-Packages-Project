@@ -81,6 +81,14 @@
         <span v-if="passwordError">{{ passwordError }}</span>
       </div>
 
+      <div v-if="errorMessage" class="error-message-container">
+        {{ errorMessage }}
+      </div>
+
+      <div v-if="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+
       <div class="button-group full-width">
         <button
           class="submit-btn"
@@ -102,7 +110,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onUnmounted } from "vue";
 import { supabase } from "../composables/supabase";
 import { useRouter } from "vue-router";
 
@@ -124,7 +132,9 @@ const phoneError = ref(null);
 const emailError = ref(null);
 const workerIdError = ref(null);
 const passwordError = ref(null);
+const successMessage = ref(null);
 const errorMessage = ref(null); // for catch block
+let errorTimeout = null;
 
 // Some regex patterns for validation
 // phoneRegex and umbcIdRegex follow "allow" logic
@@ -221,13 +231,28 @@ const handleSignUp = async () => {
 
     if (profileError) throw profileError;
 
-    alert(
-      "Account created successfully! You will be redirected to the home page.",
-    );
-    router.push("/");
+    successMessage.value =
+      "Account created successfully! You will be redirected to the home page.";
+
+    setTimeout(() => {
+      router.push("/");
+    }, 1500);
   } catch (error) {
     console.error("Sign up error:", error);
-    errorMessage.value = error.message || "Failed to create account.";
+
+    if (error.message.includes("User already registered")) {
+      errorMessage.value = "An account with this email already exists.";
+    } else {
+      errorMessage.value = error.message || "Failed to create account.";
+    }
+
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+    }
+
+    errorTimeout = setTimeout(() => {
+      errorMessage.value = null;
+    }, 3000);
   } finally {
     isSubmitting.value = false;
   }
@@ -251,14 +276,14 @@ const handleSignUp = async () => {
 .auth-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--umbc-black);
   margin: 0;
   text-align: center;
 }
 
 .auth-subtitle {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--umbc-dark-gray);
   margin-top: 8px;
 }
 
@@ -268,13 +293,11 @@ const handleSignUp = async () => {
   gap: 1rem;
   width: 100%;
   max-width: 600px;
-  background-color: #ffffff;
-  border: 1px solid #f4f4f4;
+  background-color: var(--container-background);
+  border: 1px solid var(--background-color);
   border-radius: 12px;
   padding: 24px 32px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.07),
-    0 2px 4px -2px rgba(0, 0, 0, 0.07);
+  box-shadow: var(--box-shadow);
 }
 
 .auth-form .form-group {
@@ -284,19 +307,19 @@ const handleSignUp = async () => {
 .auth-footer {
   text-align: center;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--umbc-dark-gray);
   grid-column: 1 / -1;
 }
 
 .auth-link {
-  color: #4f46e5; /* Using a generic blue */
+  color: var(--umbc-aok-teal); /* Using a generic blue */
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .auth-link:hover {
-  color: #4338ca;
+  color: var(--umbc-aok-teal-hover);
   text-decoration: underline;
 }
 
@@ -317,15 +340,15 @@ const handleSignUp = async () => {
 }
 
 .error-message {
-  color: #991b1b;
+  color: var(--umbc-red);
   white-space: pre-line;
   text-align: center;
   padding: 16px;
 }
 .success-message {
-  color: #065f46;
-  background-color: #d1fae5;
-  border: 1px solid #6ee7b7;
+  color: var(--umbc-aok-teal);
+  background-color: var(--container-background);
+  border: none;
 }
 
 .form-group span::before {
@@ -333,9 +356,36 @@ const handleSignUp = async () => {
 }
 
 .form-group span {
-  color: #991b1b;
+  color: var(--umbc-red);
   font-size: 14px;
   font-weight: 500;
   margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    padding-top: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .auth-form {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .auth-title {
+    font-size: 1.75rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 </style>
