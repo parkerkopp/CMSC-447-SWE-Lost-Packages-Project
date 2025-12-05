@@ -40,37 +40,48 @@
         </button>
       </div>
 
+      <div class="error-message" v-if="errorMessage">
+        {{ errorMessage }}
+      </div>
+
       <div class="auth-footer">
         <p>
           Don't have an account?
           <router-link to="/signup" class="auth-link">Sign Up</router-link>
         </p>
-        <p style="margin-top: 10px;">
-          <a href="#" @click.prevent="openForgotModal" class="auth-link">Forgot Password?</a>
+        <p style="margin-top: 10px">
+          <a href="#" @click.prevent="openForgotModal" class="auth-link"
+            >Forgot Password?</a
+          >
         </p>
       </div>
     </form>
 
-    <div class="error-message" v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <div v-if="showForgotModal" class="modal-overlay" @click.self="closeForgotModal">
+    <div
+      v-if="showForgotModal"
+      class="modal-overlay"
+      @click.self="closeForgotModal"
+    >
       <div class="modal-content forgot-modal-content">
-        <h2 class="auth-title" style="margin-bottom: 1rem; font-size: 1.5rem;">Reset Password</h2>
-        
+        <h2 class="auth-title" style="margin-bottom: 1rem; font-size: 1.5rem">
+          Reset Password
+        </h2>
+
         <div v-if="forgotSuccessMessage" class="success-message">
           {{ forgotSuccessMessage }}
         </div>
-        
+
         <div v-else>
-          <p class="auth-subtitle" style="margin-bottom: 1.5rem;">
-            Enter your email address. We will send you a secure link to reset your password.
+          <p class="auth-subtitle" style="margin-bottom: 1.5rem">
+            Enter your email address. We will send you a secure link to reset
+            your password.
           </p>
 
           <form @submit.prevent="handleForgotPassword" novalidate>
             <div class="form-group">
-              <label for="resetEmail" style="text-align: left; display: block;">Email Address *</label>
+              <label for="resetEmail" style="text-align: left; display: block"
+                >Email Address *</label
+              >
               <input
                 type="email"
                 id="resetEmail"
@@ -81,23 +92,40 @@
               <span v-if="resetEmailError">{{ resetEmailError }}</span>
             </div>
 
-            <div class="error-message" v-if="forgotErrorMessage" style="margin-top: 1rem;">
+            <div
+              class="error-message"
+              v-if="forgotErrorMessage"
+              style="margin-top: 1rem"
+            >
               {{ forgotErrorMessage }}
             </div>
 
-            <div class="button-group" style="margin-top: 1.5rem;">
-              <button class="clear-btn" type="button" @click="closeForgotModal" :disabled="isResetting">
+            <div class="button-group" style="margin-top: 1.5rem">
+              <button
+                class="clear-btn"
+                type="button"
+                @click="closeForgotModal"
+                :disabled="isResetting"
+              >
                 Cancel
               </button>
-              <button class="submit-btn" type="submit" :disabled="!isForgotFormValid || isResetting">
+              <button
+                class="submit-btn"
+                type="submit"
+                :disabled="!isForgotFormValid || isResetting"
+              >
                 {{ isResetting ? "Sending..." : "Send Reset Link" }}
               </button>
             </div>
           </form>
         </div>
-        
-        <div v-if="forgotSuccessMessage" class="button-group" style="justify-content: center;">
-             <button class="submit-btn" @click="closeForgotModal">Close</button>
+
+        <div
+          v-if="forgotSuccessMessage"
+          class="button-group"
+          style="justify-content: center"
+        >
+          <button class="submit-btn" @click="closeForgotModal">Close</button>
         </div>
       </div>
     </div>
@@ -116,6 +144,7 @@ const email = ref("");
 const password = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
+let errorTimeout = null;
 
 // Validation Refs
 const emailError = ref(null);
@@ -126,10 +155,7 @@ const emailRegex = /^[A-Za-z0-9]+@umbc\.edu$/;
 
 // Computed: Button is disabled unless fields are filled
 const isFormValid = computed(() => {
-  return (
-    email.value.trim() !== "" &&
-    password.value.trim() !== ""
-  );
+  return email.value.trim() !== "" && password.value.trim() !== "";
 });
 
 // --- Forgot Password State ---
@@ -144,7 +170,6 @@ const forgotSuccessMessage = ref("");
 const resetEmailError = ref(null);
 const newPasswordError = ref(null);
 const confirmPasswordError = ref(null);
-
 
 // --- Sign In Logic ---
 const handleSignIn = async () => {
@@ -175,9 +200,20 @@ const handleSignIn = async () => {
     router.push("/");
   } catch (error) {
     console.error("Sign in error:", error);
-    // General errors (like "Invalid login credentials") stay at the bottom
-    errorMessage.value =
-      error.message || "Failed to sign in. Please check your credentials.";
+    if (error.message.includes("Invalid login credentials")) {
+      errorMessage.value = "Email or password is incorrect";
+    } else {
+      errorMessage.value =
+        error.message || "Failed to sign in. Please check your credentials.";
+    }
+
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+    }
+
+    errorTimeout = setTimeout(() => {
+      errorMessage.value = null;
+    }, 3000);
   } finally {
     isSubmitting.value = false;
   }
@@ -185,7 +221,7 @@ const handleSignIn = async () => {
 
 // --- Forgot Password Logic ---
 const isForgotFormValid = computed(() => {
-  return (resetEmail.value.trim() !== "");
+  return resetEmail.value.trim() !== "";
 });
 
 const openForgotModal = () => {
@@ -213,16 +249,19 @@ const handleForgotPassword = async () => {
   }
 
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.value, {
-      redirectTo: window.location.origin, 
-    });
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      resetEmail.value,
+      {
+        redirectTo: window.location.origin,
+      },
+    );
     console.log("Redirect URL:", window.location.origin);
 
     if (error) throw error;
 
-    forgotSuccessMessage.value = "Success! Check your email for the password reset link.";
+    forgotSuccessMessage.value =
+      "Success! Check your email for the password reset link.";
     console.log("Password reset email sent.");
-    
   } catch (error) {
     console.error("Reset password error:", error);
     forgotErrorMessage.value = error.message || "Failed to send reset link.";
@@ -250,26 +289,24 @@ const handleForgotPassword = async () => {
 .auth-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--umbc-black);
   text-align: center;
 }
 
 .auth-subtitle {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--umbc-dark-gray);
   margin-top: 8px;
 }
 
 .auth-form {
   width: 100%;
   max-width: 400px;
-  background-color: #ffffff;
-  border: 1px solid #f4f4f4;
+  background-color: var(--container-background);
+  border: 1px solid var(--background-color);
   border-radius: 12px;
   padding: 24px 32px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.07),
-    0 2px 4px -2px rgba(0, 0, 0, 0.07);
+  box-shadow: var(--box-shadow);
 }
 
 .auth-form .form-group {
@@ -284,11 +321,11 @@ const handleForgotPassword = async () => {
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--umbc-dark-gray);
 }
 
 .auth-link {
-  color: #4f46e5; 
+  color: var(--umbc-aok-teal);
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
@@ -296,7 +333,7 @@ const handleForgotPassword = async () => {
 }
 
 .auth-link:hover {
-  color: #4338ca;
+  color: var(--umbc-aok-teal-hover);
   text-decoration: underline;
 }
 
@@ -317,14 +354,14 @@ const handleForgotPassword = async () => {
 }
 
 .error-message {
-  color: #991b1b;
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
+  color: var(--umbc-red);
+  background-color: var(--container-background);
+  border: none;
 }
 .success-message {
-  color: #065f46;
-  background-color: #d1fae5;
-  border: 1px solid #6ee7b7;
+  color: var(--umbc-aok-teal);
+  background-color: var(--container-background);
+  border: none;
 }
 
 /* Modal Specific Overrides */
@@ -336,17 +373,17 @@ const handleForgotPassword = async () => {
 .forgot-modal-content .form-group input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: none;
   border-radius: 12px;
   font-size: 0.95rem;
-  background-color: #f4f4f4;
+  background-color: var(--container-background);
   box-sizing: border-box;
   margin-bottom: 8px;
 }
 
 /* Inline Error Styles */
 .form-group span {
-  color: #991b1b;
+  color: var(--umbc-red);
   font-size: 12px;
   font-weight: 500;
   margin-top: 4px;
@@ -354,5 +391,42 @@ const handleForgotPassword = async () => {
 }
 .form-group span::before {
   content: "⚠ ";
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    padding-top: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .auth-form {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .auth-title {
+    font-size: 1.75rem;
+  }
+
+  .auth-subtitle {
+    font-size: 14px;
+  }
+
+  .forgot-modal-content {
+    max-width: 90vw;
+    width: 90vw;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .auth-form input {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 </style>

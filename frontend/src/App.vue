@@ -10,8 +10,8 @@
         <h1 class="title">UMBC Lost Package Services</h1>
       </div>
 
-      <!-- NEW: Hamburger menu -->
       <button
+        ref="hamburgerBtn"
         class="hamburger-btn"
         :class="{ active: isMenuOpen }"
         @click="toggleMenu"
@@ -23,6 +23,7 @@
       </button>
 
       <div
+        ref="menuContainer"
         class="link-container"
         :class="{ active: isMenuOpen }"
         @click="isMenuOpen = false"
@@ -66,23 +67,40 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { supabase } from "./composables/supabase"; // Assumes composables is at src/composables
 import { useRouter } from "vue-router";
 
 const user = ref(null);
 const router = useRouter();
-
 const showSignOutModal = ref(false);
 
-// NEW: State for hamburger menu
+const hamburgerBtn = ref(null);
+const menuContainer = ref(null);
+
 const isMenuOpen = ref(false);
+
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
+const handleClickOutside = (event) => {
+  if (!isMenuOpen.value) return;
+
+  const clickedMenu =
+    menuContainer.value && menuContainer.value.contains(event.target);
+  const clickedButton =
+    hamburgerBtn.value && hamburgerBtn.value.contains(event.target);
+
+  if (!clickedMenu && !clickedButton) {
+    isMenuOpen.value = false;
+  }
+};
+
 // Check the auth state when the app loads and when it changes
 onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+
   supabase.auth.onAuthStateChange((event, session) => {
     // NEW: Redirect to Update Password page on PASSWORD_RECOVERY event
     if (event === "PASSWORD_RECOVERY") {
@@ -91,6 +109,10 @@ onMounted(() => {
 
     user.value = session?.user || null;
   });
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
 });
 
 const cancelSignOut = () => {
@@ -105,9 +127,7 @@ const handleSignOut = async () => {
   } else {
     // On successful sign out, redirect to home
     showSignOutModal.value = false;
-    router.push("/");
+    window.location.href = "/";
   }
 };
 </script>
-
-<!-- No style block needed, all styles are in global.css -->

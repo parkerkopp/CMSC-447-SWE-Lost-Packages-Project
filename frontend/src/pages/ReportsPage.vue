@@ -8,10 +8,6 @@
       Enter package information for tracking and delivery management
     </p>
 
-    <div v-if="submitSuccess" class="success-message">
-      Package reported successfully!    
-    </div>
-
     <div v-if="submitError" class="modal-overlay" @click.self="clearError">
       <div class="modal-content">
         <h2 class="modal-error-title">Submission Error</h2>
@@ -110,6 +106,10 @@
             rows="3"
             placeholder="Any additional information about the package condition, location details, etc."
           ></textarea>
+        </div>
+
+        <div v-if="submitSuccess" class="success-message">
+          Package reported successfully!    
         </div>
 
         <div class="button-group full-width">
@@ -253,7 +253,6 @@ const clearError = () => {
 };
 
 const reportFormSubmit = async () => {
-  // NEW: Moved message resets here
   submitSuccess.value = false;
   submitError.value = null;
   trackingError.value = null;
@@ -283,7 +282,6 @@ const reportFormSubmit = async () => {
     p_notes: notes.value.trim() || null,
   };
 
-  // NEW: Updated validation logic
   let hasError = false;
   try {
     const { data: existingPackage } = await supabase

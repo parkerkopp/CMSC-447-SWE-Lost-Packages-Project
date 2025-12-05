@@ -6,6 +6,7 @@
   --umbc-red-hover: #fc434a;
   --umbc-light-gray: #c7c8ca;
   --umbc-aok-teal: #007176;
+  --umbc-aok-teal-hover: #229398;
   --umbc-retriever-brown: #a67a05;
   --umbc-dark-gray: #636466;
 
@@ -182,9 +183,18 @@
   cursor: pointer;
 }
 
-.form-group input,
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
 .form-group select,
 .form-group textarea {
+  /* New */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
   padding: 0.75rem;
   border: 1px solid var(--background-color);
   border-radius: 12px;
@@ -241,6 +251,8 @@ form-group input:-webkit-autofill,
 
 .submit-btn,
 .clear-btn {
+  width: auto;
+  min-width: 120px;
   padding: 0.875rem 2rem;
   border-radius: 12px;
   font-size: 1rem;
@@ -248,6 +260,10 @@ form-group input:-webkit-autofill,
   cursor: pointer;
   transition: all 0.2s;
   border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
 }
 
 .submit-btn {
@@ -274,11 +290,11 @@ form-group input:-webkit-autofill,
 .clear-btn {
   background-color: white;
   color: var(--umbc-black);
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--background-color);
 }
 
 .clear-btn:hover {
-  background-color: var(--border-color);
+  background-color: var(--background-color);
   cursor: pointer;
 }
 
@@ -288,8 +304,23 @@ form-group input:-webkit-autofill,
     padding: 1.5rem;
   }
 
+  .report-form {
+    grid-template-columns: 1fr;
+  }
+
+  .reports-form-container {
+    padding: 1.5rem 1rem;
+  }
+
   h1 {
     font-size: 1.5rem;
+  }
+
+  .submit-btn,
+  .clear-btn {
+    width: auto;
+    min-width: 120px;
+    padding: 0.75rem 1rem;
   }
 }
 
@@ -306,12 +337,10 @@ form-group input:-webkit-autofill,
 
 /* Error and Success */
 .success-message {
-  background-color: var(--umbc-gold);
-  color: var(--umbc-black);
-  border: 1px solid var(--umbc-gold);
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1rem;
+  background-color: var(--container-background);
+  color: var(--umbc-aok-teal);
+  border: none;
+  padding: 12px;
   text-align: center;
   font-weight: 500;
 }
@@ -581,9 +610,8 @@ form-group input:-webkit-autofill,
   text-align: center;
   padding: 40px;
   font-size: 18px;
-  color: #991b1b; /* Dark red */
-  background-color: var(--umbc-red); /* Light red */
-  border: 1px solid var(--umbc-red); /* Red border */
+  color: var(--umbc-red); /* Dark red */
+  background-color: var(--container-background); /* Light red */
   border-radius: 12px;
 }
 
@@ -1265,4 +1293,15 @@ form-group input:-webkit-autofill,
   .reports-form-container {
     padding: 1.5rem 1rem;
   }
+}
+
+.error-message-container {
+  grid-column: 1 / -1;
+  color: var(--umbc-red);
+  background-color: var(--container-background);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 14px;
 }
