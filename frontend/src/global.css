@@ -341,6 +341,7 @@ form-group input:-webkit-autofill,
   padding: 12px;
   text-align: center;
   font-weight: 500;
+  grid-column: 1 / -1;
 }
 
 .modal-overlay {
