@@ -210,27 +210,6 @@ const getErrorMessage = (error) => {
 
   console.error("Raw Supabase Error:", error); // Logs the original error to the console for debugging
 
-  /*
-  // Duplicate tracking_num
-  if (error.code === "23505") {
-    if (error.message && error.message.includes("package_tracking_num_key")) {
-      return "This tracking number has already been reported. Please check the number.";
-    }
-    return "A database conflict occurred. Please check your inputs.";
-  }
-
-  const message = error.message ? error.message.toLowerCase() : "";
-  console.error("Raw Supbase Error:", message);
-
-  // This check remains as a backup
-  if (
-    message.includes("duplicate key value") &&
-    message.includes("package_tracking_num_key")
-  ) {
-    return "This tracking number has already been reported. Please check the number.";
-  }
-  */
-
   // Network error
   if (
     message.includes("failed to fetch") ||
